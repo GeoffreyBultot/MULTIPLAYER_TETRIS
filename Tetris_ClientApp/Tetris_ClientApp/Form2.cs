@@ -10,21 +10,11 @@ using System.Windows.Forms;
 
 namespace Tetris_ClientApp
 {
-    public partial class formTetrisClientApp : Form
+    public partial class FormConnectServer : Form
     {
-        TetrisGrid gridPlayer1;
-        public formTetrisClientApp()
+        public FormConnectServer()
         {
             InitializeComponent();
-            gridPlayer1 = new TetrisGrid();
-
         }
-
-        private void btnAbandonner_Click(object sender, EventArgs e)
-        {
-            gridPlayer1.InitNewGame();
-        }
-
-
     }
 }
