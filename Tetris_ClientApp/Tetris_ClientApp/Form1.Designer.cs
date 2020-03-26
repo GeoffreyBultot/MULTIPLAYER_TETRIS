@@ -31,8 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(formTetrisClientApp));
             this.label1 = new System.Windows.Forms.Label();
             this.btnAbandonner = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -55,26 +53,6 @@
             this.btnAbandonner.UseVisualStyleBackColor = true;
             this.btnAbandonner.Click += new System.EventHandler(this.btnAbandonner_Click);
             // 
-            // panel1
-            // 
-            this.panel1.BackColor = System.Drawing.Color.Transparent;
-            this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel1.Location = new System.Drawing.Point(73, 61);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(408, 572);
-            this.panel1.TabIndex = 6;
-            // 
-            // panel2
-            // 
-            this.panel2.BackColor = System.Drawing.Color.Transparent;
-            this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panel2.Location = new System.Drawing.Point(506, 61);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(408, 572);
-            this.panel2.TabIndex = 0;
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -93,8 +71,6 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1088, 645);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.btnAbandonner);
             this.Controls.Add(this.label1);
             this.Name = "formTetrisClientApp";
@@ -107,8 +83,6 @@
         #endregion
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnAbandonner;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label2;
     }
 }
