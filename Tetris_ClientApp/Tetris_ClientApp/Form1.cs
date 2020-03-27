@@ -28,46 +28,41 @@ namespace Tetris_ClientApp
             this.Controls.Add(gridPlayerRival);
 
             _timer = new Timer();
-            _timer.Interval = 1000;
+            _timer.Interval = 100;
             _timer.Tick += new EventHandler(TimerTick);
         }
 
         private void TimerTick(object sender, EventArgs e)
         {
-
+            
+            gridPlayerMe.updateGrid();
+            //Console.WriteLine("Tick");
         }
 
         private void btnAbandonner_Click(object sender, EventArgs e)
         {
-            
+            _timer.Enabled = true;
         }
-
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-
-
             if (keyData == Keys.Down)
             {
-                Console.WriteLine("down");
-                //gridPlayerMe.
-                //p_player1.Y += 20;
+                gridPlayerMe.drop();
             }
             if (keyData == Keys.Up)
             {
-                //p_player1.Y -= 20;
+                gridPlayerMe.rotate();
             }
-            if (keyData == Keys.Z)
+            if (keyData == Keys.Left)
             {
-                //p_player2.Y -= 20;
+                gridPlayerMe.moveLeft();
             }
-            if (keyData == Keys.S)
+            if (keyData == Keys.Right)
             {
-                //p_player2.Y += 20;
+                gridPlayerMe.moveRight();
             }
             return base.ProcessCmdKey(ref msg, keyData);
-
         }
-
     }
 }
