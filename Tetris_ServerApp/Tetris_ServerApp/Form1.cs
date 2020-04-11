@@ -11,12 +11,14 @@ using System.Net;
 using System.Net.Sockets;
 namespace Tetris_ServerApp
 {
+    //remoteClients
     public partial class Form1 : Form
     {
         IPHostEntry localIP = Dns.Resolve(Dns.GetHostName());
         Socket listener;
+        Socket remoteClient;
         IPEndPoint ep;
-        
+        List<Client> remoteClients = new List<Client>();
         public Form1()
         {
             InitializeComponent();
@@ -56,16 +58,11 @@ namespace Tetris_ServerApp
         {
             try
             {
-                Socket clientSocket = listener.EndAccept(ar);
-                Console.WriteLine("CLIENT ACCEPTE");
-                
-
-                //AsyncClient client = new AsyncClient(clientSocket);
-                //onClientAccepted(client);
-                
+                remoteClient = listener.EndAccept(ar);
+                Console.WriteLine("CLIENT ACCEPTE");                
                 listener.BeginAccept(acceptClientCallback, null);
                 byte[] buffer = new byte[256];
-                clientSocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, receiveCallback, buffer);
+                remoteClient.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, receiveCallback, buffer);
 
                 //receiveData();
             }
@@ -95,39 +92,23 @@ namespace Tetris_ServerApp
 
         private void receiveCallback(IAsyncResult ar)
         {
-
-            int dataReceivedSize = 0;
-            Console.WriteLine("Data received");
-            try
-            {
-                dataReceivedSize = listener.EndReceive(ar);
-            }
-            catch (Exception e)
-            {
-                if (!listener.Connected)
-                {
-                    //onClientDisconnected(e.Message);
-                }
-            }
+            int bufferSize = remoteClient.EndReceive(ar);
+            String strRep = "";
+            String strCode = "333";
             byte[] receivedData = (byte[])ar.AsyncState;
-            Console.WriteLine(ar.AsyncState.ToString());
-            ReceiveBuffer receiveBuffer = (ReceiveBuffer)ar.AsyncState ;
+            strRep = Encoding.ASCII.GetString(receivedData, 0, bufferSize);
+            Console.WriteLine(strRep);
 
-            if (dataReceivedSize > 0)
-            {
-                receiveBuffer.Append(dataReceivedSize);
-                if (listener.Available > 0)
-                    listener.BeginReceive(receiveBuffer.tempBuffer, 0, ReceiveBuffer.BufferSize, SocketFlags.None, receiveCallback, receiveBuffer);
-                else
-                {
-                    object data = receiveBuffer.Deserialize();
-                    
-                    //onDataReceived(data);
-                    receiveData();
-                }
-            }
+            byte[] Code = Encoding.ASCII.GetBytes(strCode);
+
+            if ( strRep == "giveMeCode")
+                remoteClient.BeginSend(Code, 0, Code.Length, SocketFlags.None, transmitClientCallback, Code);
+            
         }
 
-
+        private void transmitClientCallback(IAsyncResult ar)
+        {
+            //throw new NotImplementedException();
+        }
     }
 }

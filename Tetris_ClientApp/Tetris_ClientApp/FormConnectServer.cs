@@ -20,12 +20,14 @@ namespace Tetris_ClientApp
         IPHostEntry localIP = Dns.Resolve(Dns.GetHostName());
         private Socket clientSocket;
         IPEndPoint ep;
+        delegate void PrintHandler(string msgToPrint);
         public FormConnectServer()
         {
             InitializeComponent();
             txtBoxServerIP.Text = localIP.AddressList[0].ToString();
             clientSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            Console.WriteLine(localIP);
+            Console.WriteLine(localIP.AddressList[0].ToString());
+
             ep = new IPEndPoint(IPAddress.Parse(localIP.AddressList[0].ToString()), 2600);
             clientSocket.BeginConnect(ep, clientConnectedCallback, null);
         }
@@ -33,31 +35,18 @@ namespace Tetris_ClientApp
         private void btnGetCode_Click(object sender, EventArgs e)
         {
             String strGetCode = "giveMeCode";
-            ReceiveBuffer receiveBuffer = new ReceiveBuffer();
-            Send(strGetCode);
+            byte[] buffer = Encoding.ASCII.GetBytes(strGetCode);
+            //ReceiveBuffer receiveBuffer = new ReceiveBuffer();
+            Send(buffer);
             receiveData();
         }
-
-        private byte[] serialize(object data)
-        {
-            /* L'objet à envoyer doit être sérialisé avant de pouvoir être envoyé (plus d'informations -> ReceiveBuffer.cs).
-             * On utilise ici un BinaryFormatter qui nécessite l'utilisation d'un memoryStream dans lequel seront écrites
-             * les données sérialisées.
-             */
-            BinaryFormatter bin = new BinaryFormatter();
-            MemoryStream mem = new MemoryStream();
-            bin.Serialize(mem, data);
-            byte[] buffer = mem.GetBuffer();
-            mem.Close();
-            return buffer;
-        }
-
+        byte[] receiveBuffer = new byte[4096];
         private void receiveData()
         {
             if (clientSocket.Connected)
             {
-                ReceiveBuffer receiveBuffer = new ReceiveBuffer();
-                clientSocket.BeginReceive(receiveBuffer.tempBuffer, 0, ReceiveBuffer.BufferSize, SocketFlags.None, receiveCallback, receiveBuffer);
+                
+                clientSocket.BeginReceive(receiveBuffer, 0, 4096, SocketFlags.None, receiveCallback, receiveBuffer);
             }
         }
 
@@ -68,7 +57,7 @@ namespace Tetris_ClientApp
                 /* Les données à envoyer doivent être transformés en tableau de byte (serialize).
                  */
 
-                byte[] dataBuffer = serialize(data);
+                byte[] dataBuffer = (byte[])data;
 
                 try
                 {
@@ -120,32 +109,21 @@ namespace Tetris_ClientApp
 
         private void receiveCallback(IAsyncResult ar)
         {
-            int dataReceivedSize = 0;
-            try 
-            {
-                dataReceivedSize = clientSocket.EndReceive(ar);
-            }
-            catch (Exception e)
-            {
-                if (!clientSocket.Connected)
-                {
-                    //onClientDisconnected(e.Message);
-                }
-            }
-            ReceiveBuffer receiveBuffer = (ReceiveBuffer)ar.AsyncState;
+            int bufferSize = clientSocket.EndReceive(ar);
+            String strRep = "";
+            byte[] receivedData = (byte[])ar.AsyncState;
+            strRep = Encoding.ASCII.GetString(receivedData, 0, bufferSize);
+            Console.WriteLine(strRep);
+            PrintHandler p = new PrintHandler(printClientInfo);
+            this.Invoke(p, strRep);
 
-            if (dataReceivedSize > 0)
-            {
-                receiveBuffer.Append(dataReceivedSize);
-                if (clientSocket.Available > 0)
-                    clientSocket.BeginReceive(receiveBuffer.tempBuffer, 0, ReceiveBuffer.BufferSize, SocketFlags.None, receiveCallback, receiveBuffer);
-                else
-                {
-                    object data = receiveBuffer.Deserialize();
-                    //onDataReceived(data);
-                    receiveData();
-                }
-            }
+        }
+
+        private void printClientInfo(string msgToPrint)
+        {
+            lblCodeReceived.Text = "Code:"+msgToPrint;
+            textBox1.Text = msgToPrint;
+            //throw new NotImplementedException();
         }
     }
 }
