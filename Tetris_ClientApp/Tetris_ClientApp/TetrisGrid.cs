@@ -39,10 +39,8 @@ namespace Tetris_ClientApp
             for (int i = 0; i < rows; i++)
                 for (int j = 0; j < cols; j++)
                     labelsBlock[i, j].BackColor = Color.Black;
-
-            myTimer.Interval = (int)(100 / (level * 0.7));
+            myTimer.Interval = (int)(100 / (level * 1));
             myTimer.Start();
-
         }
         public void stop()
         {
@@ -88,24 +86,38 @@ namespace Tetris_ClientApp
         public void drop()
         {
             while (moveDown()) ;
-            Refresh();
+            //Refresh();
         }
         public void moveLeft()
         {
-
-            if (check(figure, px - 1, py)) px = px - 1;
-            Refresh();
+            erasefigure(figure, px, py);
+            if (check(figure, px - 1, py))
+            {
+                Console.WriteLine("OK");
+                px--;
+                Console.WriteLine("draw by moveleft");
+            }
+            drawfigure(figure, px, py);
+            //Refresh();
         }
         public void moveRight()
         {
-            if (check(figure, px + 1, py)) px++;
-            Refresh();
+            erasefigure(figure, px, py);
+            if (check(figure, px + 1, py))
+            {
+                Console.WriteLine("draw by moveright");
+                px++;
+            }
+            drawfigure(figure, px, py);
+            //Refresh();
         }
 
         public void rotate()
         {
             int sz = conversize(figure.Length);
             int[,] ff = new int[sz, sz];
+            erasefigure(figure, px, py);
+
             if (sz != 4)
             {
                 for (int k = 0; k < sz; k++)
@@ -120,32 +132,37 @@ namespace Tetris_ClientApp
                     for (int j = sz - 1; j >= 0; j--)
                         ff[k, j] = figure[j, k];
             }
-            if (check(ff, px, py)) figure = copyfigure(ff);
-            Refresh();
+            if (check(ff, px, py))
+            {
+                
+                figure = copyfigure(ff);
+
+                drawfigure(ff, px, py);
+            }
         }
         private bool moveDown()
         {
             //labelsBlock[4, 4].BackColor = Color.Blue;
+            //erase figure
+            int sz = conversize(figure.Length);
+
+            erasefigure(figure, px, py);
             if (check(figure, px, py + 1))
             {
                 py++;
-                Console.WriteLine(py.ToString() + px.ToString());
+                Console.WriteLine("draw by movedown");
+                drawfigure(figure, px, py);
+
+                //Console.WriteLine(px.ToString() + ";" + py.ToString());
+
                 return true;
             }
-
-            //drawing figure
-            int sz = conversize(figure.Length);
-
-            for (int i = 0; i < sz; i++)
+            else
             {
-                for (int j = 0; j < sz; j++)
-                {
-                    if (figure[i, j] != 0)
-                    {
-                        labelsBlock[j + py, i + px].BackColor = Color.Blue;//figure[i, j];
-                    }
-                }
+                drawfigure(figure, px, py);
             }
+            Console.WriteLine(py.ToString() + px.ToString());
+
             int count = 0;
             for (int j = 1; j < 20; j++)
             {
@@ -156,7 +173,6 @@ namespace Tetris_ClientApp
                 }
                 if (full)
                 {
-                    Console.WriteLine("FULL");
                     lines++;
                     count++;
                     for (int k = j; k > 0; k--)
@@ -173,26 +189,122 @@ namespace Tetris_ClientApp
             return false;
         }
 
-        bool check(int[,] fg, int x, int y)
+        void drawfigure(int[,] fg, int x, int y)
         {
             int sz = conversize(fg.Length);
+
             for (int i = 0; i < sz; i++)
+            {
                 for (int j = 0; j < sz; j++)
                 {
-                    int rx = i + x;
-                    int ry = j + y;
-                    if ((rx < 0 || rx > 9 || ry < 0 || ry > 19) && fg[i, j] != 0)
-                        return false;
-                    if (!(rx < 0 || rx > 9 || ry < 0 || ry > 19))
+                    if (fg[i, j] != 0)
                     {
-                        if (labelsBlock[ry, rx].BackColor != Color.Black && fg[i, j] != 0)
-                            return false;
+                        //Console.WriteLine("from drawing:" + (i + x).ToString());
+                        //Console.WriteLine("from drawing:" + x.ToString() + ";"+ fg[i, j].ToString());
+                        labelsBlock[i + y, j + x].BackColor = Color.Blue;//figure[i, j];
                     }
+                }
+            }
+        }
+
+        void erasefigure(int[,] fg, int x, int y)
+        {
+            int sz = conversize(fg.Length);
+
+            for (int i = 0; i < sz; i++)
+            {
+                for (int j = 0; j < sz; j++)
+                {
+                    if (fg[i, j] != 0)
+                    {
+                        labelsBlock[i + y, j + x].BackColor = Color.Black;//figure[i, j];
+                    }
+
+                }
+            }
+        }
+
+
+        bool checkLeft(int[,] fg, int x, int y)
+        {
+            int sz = conversize(fg.Length);
+            for (int j = 0; j < sz; j++)//Colonnes
+                for (int i = sz - 1; i > -1; i--)//Lignes en remontant
+                {
+                    int rx = j + x;//Position x relative de futur
+                    int ry = i + y;//Position y relative de futur
+                    Console.WriteLine(x.ToString() + ";" + rx.ToString() + fg[i, j].ToString());
+                    if ((rx <  0 ) && (fg[i, j] != 0))
+                        return false;
+                    if ((rx >= 0) && (fg[i, j] != 0)) 
+                    {
+
+                        Console.WriteLine("FromCheckLeftOK" + i.ToString() + ";" + rx.ToString() + ";" + j.ToString() + ";" + ry.ToString() + ";") ;
+                        if (labelsBlock[ry, rx].BackColor != Color.Black)
+                            return false;
+                        else
+                            return true;
+                    }
+                
                 }
             return true;
         }
 
-    private void drawGrid(int rows, int cols)
+        bool checkRight(int[,] fg, int x, int y)
+        {
+            int sz = conversize(fg.Length);
+            for (int j = 0; j < sz; j++)//Colonnes àpd la premiere 
+                for (int i = 0 ; i < sz; i++)//Lignes en remontant
+                {
+                    int rx = j + x;//Position x relative de futur
+                    int ry = i + y;//Position y relative de futur
+
+                    if ((rx > 9) && fg[i, j] != 0)
+                        return false;
+                    if ( (rx <= 9) && (fg[i,j] != 0) )
+                    {
+                        Console.WriteLine("OK");
+                        Console.WriteLine(j.ToString()+rx.ToString()) ;
+
+                        if (labelsBlock[ry, rx].BackColor != Color.Black)
+                            return false;
+                        else
+                            return true;
+                    }
+                }
+            return false;
+        }
+
+        bool check(int[,] fg, int x, int y)
+        {
+            bool ret = true;
+            int sz = conversize(fg.Length);
+            for (int i = sz - 1; i > -1; i--)
+                for (int j = 0; j < sz; j++)
+                {
+                    int rx = j + x;
+                    int ry = i + y;
+                    //Console.WriteLine(rx.ToString(),ry.ToString());
+                    if ((ry < 0 || ry > 19 || rx < 0 || rx > 9 ) && fg[i, j] != 0)
+                        ret = false;
+
+                    if(ret == true)
+                    {
+                        if (!(ry < 0 || ry > 19 || rx < 0 || rx > 9))
+                        {
+                            if (fg[i, j] != 0)
+                            {
+                                if (labelsBlock[ry, rx].BackColor != Color.Black)
+                                    ret = false;
+                            }
+                        }
+                    }
+                    
+                }
+            return ret;
+        }
+
+        private void drawGrid(int rows, int cols)
         {
             //LabelsCreation
             float interval = (float)(this.Width) / (float)(cols);

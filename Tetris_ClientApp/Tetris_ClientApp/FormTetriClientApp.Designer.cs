@@ -69,7 +69,7 @@
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1088, 645);
+            this.ClientSize = new System.Drawing.Size(1088, 785);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnAbandonner);
             this.Controls.Add(this.label1);

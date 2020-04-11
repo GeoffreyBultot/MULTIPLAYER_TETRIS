@@ -18,23 +18,26 @@ namespace Tetris_ClientApp
         public formTetrisClientApp()
         {
             InitializeComponent();
+
+            FormConnectServer serverConnection = new FormConnectServer();
+            serverConnection.ShowDialog();
+
             gridPlayerMe = new TetrisGrid(300, 600, 20, 10);
             gridPlayerRival = new TetrisGrid(300, 600, 20, 10);
             
-            gridPlayerMe.Location = new Point(100, this.Height - gridPlayerMe.Height); 
-            gridPlayerRival.Location = new Point(600, this.Height - gridPlayerRival.Height);
+            gridPlayerMe.Location = new Point(100, this.Height - gridPlayerMe.Height - 100); 
+            gridPlayerRival.Location = new Point(600, this.Height - gridPlayerRival.Height - 100);
 
             this.Controls.Add(gridPlayerMe);
             this.Controls.Add(gridPlayerRival);
-
             _timer = new Timer();
-            _timer.Interval = 100;
+            _timer.Interval = 300;
             _timer.Tick += new EventHandler(TimerTick);
         }
 
         private void TimerTick(object sender, EventArgs e)
         {
-            
+
             gridPlayerMe.updateGrid();
             //Console.WriteLine("Tick");
         }
