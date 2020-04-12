@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tetris_ServerApp
+namespace Tetris_ClientApp
 {
     public class Client
     {
@@ -179,9 +179,8 @@ namespace Tetris_ServerApp
                     onClientDisconnected(e.Message);
                 }
             }
-            Console.WriteLine(ar.AsyncState.ToString());
+            
             ReceiveBuffer receiveBuffer = (ReceiveBuffer)ar.AsyncState;
-
             if (dataReceivedSize > 0)
             {
                 /* Si des données ont été reçues, on les accumule dans le memoryStream, et si après réception il y en a encore,
@@ -214,6 +213,7 @@ namespace Tetris_ServerApp
             {
                 if (ClientDisconnected.Target is System.Windows.Forms.Control)
                 {
+                    Console.WriteLine("Finish");
                     ((System.Windows.Forms.Control)ClientDisconnected.Target).Invoke(ClientDisconnected, this, message);
                 }
                 else

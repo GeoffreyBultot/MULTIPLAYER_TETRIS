@@ -11,16 +11,16 @@ namespace Tetris_ClientApp
     
     public class TetrisGrid : Panel
     {
-        const int rectSize = 10;
-        const int numLines = 10;
-        const int numCols = 10;
+        public int rectSize = 10;
+        public int numLines = 10;
+        public int numCols = 10;
         Random rnd = new Random();
 
         System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
         public int lines = 0, x2 = 0, x3 = 0, x4 = 0;
         int next = 0;
         int level = 1;
-        Label[,] labelsBlock;
+        public Label[,] labelsBlock;
         bool game = false;
         Pen[] pens = new Pen[9];
         Brush[] brushes = new Brush[9];
@@ -34,6 +34,8 @@ namespace Tetris_ClientApp
             this.Height = height;
             this.Width = width;
             this.BackColor = Color.DarkGray;
+            numLines = rows;
+            numCols = cols;
             drawGrid(rows, cols);
             setfigure();
             for (int i = 0; i < rows; i++)
@@ -93,9 +95,9 @@ namespace Tetris_ClientApp
             erasefigure(figure, px, py);
             if (check(figure, px - 1, py))
             {
-                Console.WriteLine("OK");
+                //Console.WriteLine("OK");
                 px--;
-                Console.WriteLine("draw by moveleft");
+                //Console.WriteLine("draw by moveleft");
             }
             drawfigure(figure, px, py);
             //Refresh();
@@ -105,7 +107,7 @@ namespace Tetris_ClientApp
             erasefigure(figure, px, py);
             if (check(figure, px + 1, py))
             {
-                Console.WriteLine("draw by moveright");
+                //Console.WriteLine("draw by moveright");
                 px++;
             }
             drawfigure(figure, px, py);
@@ -150,7 +152,7 @@ namespace Tetris_ClientApp
             if (check(figure, px, py + 1))
             {
                 py++;
-                Console.WriteLine("draw by movedown");
+                //Console.WriteLine("draw by movedown");
                 drawfigure(figure, px, py);
 
                 //Console.WriteLine(px.ToString() + ";" + py.ToString());
@@ -233,13 +235,13 @@ namespace Tetris_ClientApp
                 {
                     int rx = j + x;//Position x relative de futur
                     int ry = i + y;//Position y relative de futur
-                    Console.WriteLine(x.ToString() + ";" + rx.ToString() + fg[i, j].ToString());
+                    //Console.WriteLine(x.ToString() + ";" + rx.ToString() + fg[i, j].ToString());
                     if ((rx <  0 ) && (fg[i, j] != 0))
                         return false;
                     if ((rx >= 0) && (fg[i, j] != 0)) 
                     {
 
-                        Console.WriteLine("FromCheckLeftOK" + i.ToString() + ";" + rx.ToString() + ";" + j.ToString() + ";" + ry.ToString() + ";") ;
+                        //Console.WriteLine("FromCheckLeftOK" + i.ToString() + ";" + rx.ToString() + ";" + j.ToString() + ";" + ry.ToString() + ";") ;
                         if (labelsBlock[ry, rx].BackColor != Color.Black)
                             return false;
                         else
@@ -263,8 +265,8 @@ namespace Tetris_ClientApp
                         return false;
                     if ( (rx <= 9) && (fg[i,j] != 0) )
                     {
-                        Console.WriteLine("OK");
-                        Console.WriteLine(j.ToString()+rx.ToString()) ;
+                        //Console.WriteLine("OK");
+                        //Console.WriteLine(j.ToString()+rx.ToString()) ;
 
                         if (labelsBlock[ry, rx].BackColor != Color.Black)
                             return false;

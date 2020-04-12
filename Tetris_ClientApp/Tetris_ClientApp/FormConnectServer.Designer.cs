@@ -35,6 +35,8 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.txtBoxServerIP = new System.Windows.Forms.TextBox();
             this.btnGetCode = new System.Windows.Forms.Button();
+            this.btnConnect = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblCodeReceived
@@ -88,6 +90,26 @@
             this.btnGetCode.UseVisualStyleBackColor = true;
             this.btnGetCode.Click += new System.EventHandler(this.btnGetCode_Click);
             // 
+            // btnConnect
+            // 
+            this.btnConnect.Location = new System.Drawing.Point(136, 148);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(75, 23);
+            this.btnConnect.TabIndex = 7;
+            this.btnConnect.Text = "Connect";
+            this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(217, 148);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 8;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
             // FormConnectServer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -95,6 +117,8 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(304, 183);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnConnect);
             this.Controls.Add(this.btnGetCode);
             this.Controls.Add(this.txtBoxServerIP);
             this.Controls.Add(this.textBox1);
@@ -116,5 +140,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox txtBoxServerIP;
         private System.Windows.Forms.Button btnGetCode;
+        private System.Windows.Forms.Button btnConnect;
+        private System.Windows.Forms.Button btnCancel;
     }
 }

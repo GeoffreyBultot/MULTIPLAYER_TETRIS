@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client.cs" />
     <Compile Include="FormTetriClientApp.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,6 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiveBuffer.cs" />
     <Compile Include="SingleSquare.cs" />
+    <Compile Include="TetrisClientInfo.cs" />
     <Compile Include="TetrisGrid.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -12,6 +12,7 @@ namespace Tetris_ClientApp
 {
     public partial class formTetrisClientApp : Form
     {
+        Client remoteServer;
         TetrisGrid gridPlayerMe;
         TetrisGrid gridPlayerRival;
         private Timer _timer = new Timer();
@@ -21,7 +22,17 @@ namespace Tetris_ClientApp
 
             FormConnectServer serverConnection = new FormConnectServer();
             serverConnection.ShowDialog();
-
+            if (serverConnection.DialogResult == DialogResult.OK)
+            {
+                remoteServer = serverConnection.remoteServer;
+                //remoteServer.Send("ok");
+                Console.WriteLine("ok");
+            }
+            else if(serverConnection.DialogResult == DialogResult.Cancel)
+            {
+                Console.WriteLine("ouioui");
+                //Close();
+            }
             gridPlayerMe = new TetrisGrid(300, 600, 20, 10);
             gridPlayerRival = new TetrisGrid(300, 600, 20, 10);
             
@@ -38,8 +49,17 @@ namespace Tetris_ClientApp
         private void TimerTick(object sender, EventArgs e)
         {
 
-            gridPlayerMe.updateGrid();
+            
             //Console.WriteLine("Tick");
+            if (remoteServer != null)
+                if (remoteServer.ClientSocket.Connected)
+                {
+                    Console.WriteLine("send");
+                    TetrisClientInfo info = new TetrisClientInfo(gridPlayerMe);
+                    remoteServer.Send(info);
+                }
+            gridPlayerMe.updateGrid();
+
         }
 
         private void btnAbandonner_Click(object sender, EventArgs e)
