@@ -21,6 +21,7 @@ namespace Tetris_ServerApp
         
         Server server;
         List<Client> remoteClients = new List<Client>();
+        List<Channel> PlayingChannels = new List<Channel>();
         public TetrisServerApp()
         {
             InitializeComponent();
@@ -93,13 +94,42 @@ namespace Tetris_ServerApp
             //int nextClientIndex = (remoteClients.IndexOf(client) + 1) % remoteClients.Count;
             if (data is String)
             {
-                remoteClients[remoteClients.IndexOf(client)].Send("333");
+                Console.WriteLine(data);
+                if ((String)data == "giveMeCode")
+                {
+                    int chanel;
+                    Random random = new Random();
+                    chanel = random.Next(1, 9999);
+                        
+                    remoteClients[remoteClients.IndexOf(client)].Send(chanel.ToString());
+                }
+            }
+            else if (data is byte[])
+            {
+                String stCode = Encoding.ASCII.GetString((byte[])data);
+                
+                for (int i = 0; i < PlayingChannels.Count; i++)
+                {
+                    if (PlayingChannels[i].code == Int32.Parse(stCode))
+                    {
+                        
+                        if (PlayingChannels[i].AddPlayer(remoteClients[remoteClients.IndexOf(client)]))
+                        {
+                            remoteClients[remoteClients.IndexOf(client)].DataReceived -= RemoteClient_DataReceived;
+                        }
+                        return;
+                    }
+                }
+                Channel chan = new Channel(Int32.Parse(stCode));
+                chan.AddPlayer(client);
+                PlayingChannels.Add(chan);
+                Console.WriteLine(stCode);
             }
             else
             {
-                int nextClientIndex = (remoteClients.IndexOf(client) + 1) % remoteClients.Count;
+                /*int nextClientIndex = (remoteClients.IndexOf(client) + 1) % remoteClients.Count;
                 remoteClients[nextClientIndex].Send(data);
-
+                */
                 //remoteClients[remoteClients.IndexOf(client)].Send(data);
                 //TODO: envoyer sur le bon channel
             }

@@ -21,6 +21,20 @@ namespace Tetris_ClientApp
             InitializeComponent();
 
             FormConnectServer serverConnection = new FormConnectServer();
+
+
+            gridPlayerMe = new TetrisGrid(300, 600, 20, 10);
+            gridPlayerRival = new TetrisGrid(300, 600, 20, 10);
+
+            gridPlayerMe.Location = new Point(100, this.Height - gridPlayerMe.Height - 100);
+            gridPlayerRival.Location = new Point(600, this.Height - gridPlayerRival.Height - 100);
+
+            this.Controls.Add(gridPlayerMe);
+            this.Controls.Add(gridPlayerRival);
+            _timer = new Timer();
+            _timer.Interval = 300;
+            _timer.Tick += new EventHandler(TimerTick);
+
             serverConnection.ShowDialog();
             if (serverConnection.DialogResult == DialogResult.OK)
             {
@@ -29,24 +43,20 @@ namespace Tetris_ClientApp
                 remoteServer.DataReceived += RemoteServer_DataReceived;
                 remoteServer.ClientDisconnected += RemoteServer_ClientDisconnected;
                 remoteServer.ConnectionRefused += RemoteServer_ConnectionRefused;
+
+                byte[] codeChannel = Encoding.ASCII.GetBytes(serverConnection.stCode);
+                remoteServer.Send(codeChannel);
+
                 Console.WriteLine("ok");
             }
             else if(serverConnection.DialogResult == DialogResult.Cancel)
             {
                 Console.WriteLine("ouioui");
-                //Close();
+                //remoteServer.Disconnect();
+                //serverConnection.Close();
+                //this.Close();
             }
-            gridPlayerMe = new TetrisGrid(300, 600, 20, 10);
-            gridPlayerRival = new TetrisGrid(300, 600, 20, 10);
             
-            gridPlayerMe.Location = new Point(100, this.Height - gridPlayerMe.Height - 100); 
-            gridPlayerRival.Location = new Point(600, this.Height - gridPlayerRival.Height - 100);
-
-            this.Controls.Add(gridPlayerMe);
-            this.Controls.Add(gridPlayerRival);
-            _timer = new Timer();
-            _timer.Interval = 300;
-            _timer.Tick += new EventHandler(TimerTick);
         }
 
         private void TimerTick(object sender, EventArgs e)
@@ -57,7 +67,7 @@ namespace Tetris_ClientApp
             if (remoteServer != null)
                 if (remoteServer.ClientSocket.Connected)
                 {
-                    Console.WriteLine("send");
+                    //Console.WriteLine("send");
                     TetrisClientInfo info = new TetrisClientInfo(gridPlayerMe);
                     remoteServer.Send(info);
                 }

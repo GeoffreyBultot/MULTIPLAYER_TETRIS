@@ -258,7 +258,7 @@ namespace Tetris_ClientApp
             {
                 if (ClientConnected.Target is System.Windows.Forms.Control)
                 {
-                    ((System.Windows.Forms.Control)ClientConnected.Target).Invoke(ClientConnected, this);
+                    //((System.Windows.Forms.Control)ClientConnected.Target).Invoke(ClientConnected, this);
                 }
                 else
                 {

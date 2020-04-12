@@ -17,13 +17,12 @@ namespace Tetris_ClientApp
     public partial class FormConnectServer : Form
     {
         public Client remoteServer;
-
+        public String stCode;
         IPHostEntry localIP = Dns.Resolve(Dns.GetHostName());
         private Socket clientSocket;
         IPEndPoint ep;
         delegate void PrintHandler(string msgToPrint);
-
-
+        
         public FormConnectServer()
         {
             InitializeComponent();
@@ -60,12 +59,15 @@ namespace Tetris_ClientApp
             remoteServer.DataReceived -= RemoteServer_DataReceived;
             remoteServer.ClientDisconnected -= RemoteServer_ClientDisconnected;
             remoteServer.ConnectionRefused -= RemoteServer_ConnectionRefused;
+            stCode = textBox1.Text;
             DialogResult = DialogResult.OK;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+            remoteServer.Disconnect();
+            this.Close();
         }
 
         private void RemoteServer_ConnectionRefused(Client client, string message)
@@ -87,28 +89,34 @@ namespace Tetris_ClientApp
             /* Lorsequ' on recoit des données du serveur, ces données contiennent les informations d'une forme (MovingShapeInfo).
              * On crée une nouvelle forme à partir de ses informations, et on veille à ce que sa position en X soit à 0 (à gauche).
              */
-            Console.WriteLine("c arrive");
+            //Console.WriteLine("c arrive");
             if (data is String)
             {
                 String test = (String)data;
                 Console.WriteLine(test);
+                PrintHandler p = new PrintHandler(printClientInfo);
+                this.Invoke(p, test);
             }
             else
             {
-                Console.WriteLine("other");
-            }
-                //Type typeParameterType = typeof(data);
-                
-            //Console.WriteLine(Encoding.ASCII.GetString(test, 0, test.Length)) ;
-            //MovingShapeInfo shapeInfo = (MovingShapeInfo)data;
-            //shapeInfo.Location = new Point(10, shapeInfo.Location.Y); // on affiche la nouvelle forme à gauche 
-            //AddShape(shapeInfo);
-        }
+                //Console.WriteLine("other");
 
-        private void RemoteServer_ClientConnected(Client client)
+            }
+        }
+        
+            
+
+        private void printClientInfo(string msgToPrint)
+        {
+            lblCodeReceived.Text = "Code: " + msgToPrint;
+            textBox1.Text = msgToPrint;
+            //throw new NotImplementedException();
+        }
+    private void RemoteServer_ClientConnected(Client client)
         {
             //labelClientStatus.Text = "You are connected to " + client.ClientSocket.RemoteEndPoint;
         }
+
         private void RemoteServer_ClientDisconnected(Client client, string message)
         {
             MessageBox.Show("You have been disconnected ! Window will now close.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
