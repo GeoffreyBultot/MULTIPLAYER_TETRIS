@@ -25,7 +25,10 @@ namespace Tetris_ClientApp
             if (serverConnection.DialogResult == DialogResult.OK)
             {
                 remoteServer = serverConnection.remoteServer;
-                //remoteServer.Send("ok");
+                remoteServer.ClientConnected += RemoteServer_ClientConnected;
+                remoteServer.DataReceived += RemoteServer_DataReceived;
+                remoteServer.ClientDisconnected += RemoteServer_ClientDisconnected;
+                remoteServer.ConnectionRefused += RemoteServer_ConnectionRefused;
                 Console.WriteLine("ok");
             }
             else if(serverConnection.DialogResult == DialogResult.Cancel)
@@ -86,6 +89,49 @@ namespace Tetris_ClientApp
                 gridPlayerMe.moveRight();
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void RemoteServer_ConnectionRefused(Client client, string message)
+        {
+            MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            this.Close();
+        }
+
+        private void RemoteServer_DataReceived(Client client, object data)
+        {
+            //Console.WriteLine("c arrive");
+            if (data is String)
+            {
+                String test = (String)data;
+                Console.WriteLine(test);
+            }
+            else
+            {
+                TetrisClientInfo info = (TetrisClientInfo)data;
+                //Console.WriteLine("other");
+                 
+                int rows = gridPlayerRival.numLines;
+                int cols = gridPlayerRival.numCols;
+                //this.tbColors = new Color[rows, cols];
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < cols; j++)
+                    {
+                        gridPlayerRival.labelsBlock[i, j].BackColor = info.tbColors[i,j];
+                    }//this.BackColor = s.BackColor;
+
+                }
+            }
+        }
+
+        private void RemoteServer_ClientConnected(Client client)
+        {
+        }
+        private void RemoteServer_ClientDisconnected(Client client, string message)
+        {
+            MessageBox.Show("You have been disconnected ! Window will now close.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            this.Close();
         }
     }
 }

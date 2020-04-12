@@ -97,7 +97,10 @@ namespace Tetris_ServerApp
             }
             else
             {
-                remoteClients[remoteClients.IndexOf(client)].Send(data);
+                int nextClientIndex = (remoteClients.IndexOf(client) + 1) % remoteClients.Count;
+                remoteClients[nextClientIndex].Send(data);
+
+                //remoteClients[remoteClients.IndexOf(client)].Send(data);
                 //TODO: envoyer sur le bon channel
             }
             //monitorServerMessages.AddMessage("data sent from " + client.ClientSocket.RemoteEndPoint + " to " + remoteClients[nextClientIndex].ClientSocket.RemoteEndPoint);

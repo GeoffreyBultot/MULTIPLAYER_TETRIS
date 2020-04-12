@@ -15,6 +15,7 @@ namespace Tetris_ClientApp
 
         public TetrisClientInfo()
         {
+
         }
 
 

@@ -56,6 +56,10 @@ namespace Tetris_ClientApp
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
+            remoteServer.ClientConnected -= RemoteServer_ClientConnected;
+            remoteServer.DataReceived -= RemoteServer_DataReceived;
+            remoteServer.ClientDisconnected -= RemoteServer_ClientDisconnected;
+            remoteServer.ConnectionRefused -= RemoteServer_ConnectionRefused;
             DialogResult = DialogResult.OK;
         }
 
@@ -84,9 +88,17 @@ namespace Tetris_ClientApp
              * On crée une nouvelle forme à partir de ses informations, et on veille à ce que sa position en X soit à 0 (à gauche).
              */
             Console.WriteLine("c arrive");
-            String test = (String)data;
-            //Type typeParameterType = typeof(data);
-            Console.WriteLine(test);
+            if (data is String)
+            {
+                String test = (String)data;
+                Console.WriteLine(test);
+            }
+            else
+            {
+                Console.WriteLine("other");
+            }
+                //Type typeParameterType = typeof(data);
+                
             //Console.WriteLine(Encoding.ASCII.GetString(test, 0, test.Length)) ;
             //MovingShapeInfo shapeInfo = (MovingShapeInfo)data;
             //shapeInfo.Location = new Point(10, shapeInfo.Location.Y); // on affiche la nouvelle forme à gauche 

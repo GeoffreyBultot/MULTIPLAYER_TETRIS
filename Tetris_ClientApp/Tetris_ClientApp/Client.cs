@@ -241,7 +241,9 @@ namespace Tetris_ClientApp
             {
                 if (DataReceived.Target is System.Windows.Forms.Control)
                 {
-                    ((System.Windows.Forms.Control)DataReceived.Target).Invoke(DataReceived, this, data);
+                    //DataReceived.Target.Invoke(DataReceived, this, data);
+                    //((System.Windows.Forms.Control)DataReceived.Target).Invoke(DataReceived, this, data);
+                    DataReceived(this, data);
                 }
                 else
                 {

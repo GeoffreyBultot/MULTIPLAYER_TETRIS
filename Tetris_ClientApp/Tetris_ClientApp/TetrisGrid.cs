@@ -163,7 +163,7 @@ namespace Tetris_ClientApp
             {
                 drawfigure(figure, px, py);
             }
-            Console.WriteLine(py.ToString() + px.ToString());
+            //Console.WriteLine(py.ToString() + px.ToString());
 
             int count = 0;
             for (int j = 1; j < 20; j++)
