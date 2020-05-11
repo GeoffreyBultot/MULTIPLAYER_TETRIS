@@ -54,7 +54,15 @@ namespace Tetris_ServerApp
             object data;
             memStream.Seek(0, SeekOrigin.Begin);
 
-            data = formatter.Deserialize(memStream);
+            try
+            {
+                data = formatter.Deserialize(memStream);
+            }
+            catch
+            {
+                Console.WriteLine("c foutu");
+                return null;
+            }
 
             memStream.Close();
 

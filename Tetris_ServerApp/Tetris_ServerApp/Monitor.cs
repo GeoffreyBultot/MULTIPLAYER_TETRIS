@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Tetris_ServerApp
 {
-    class Monitor : TextBox
+    public class Monitor : TextBox
     {
         public int NumberOfLines { get; set; }
 

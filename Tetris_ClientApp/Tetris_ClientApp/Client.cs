@@ -34,6 +34,7 @@ namespace Tetris_ClientApp
         public Socket ClientSocket { get { return clientSocket; } set { clientSocket = value; } }
 
         private Socket clientSocket;
+        public bool ready = false;
 
         #region Constructors
         /* La construction d'un AsyncClient revient à instancier un objet Socket sur lequel se fera la connexion et 

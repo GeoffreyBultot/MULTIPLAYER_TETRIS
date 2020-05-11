@@ -12,13 +12,6 @@ namespace Tetris_ServerApp
 {
     public class Client
     {
-        /* La classe AsyncClient a été créée pour simplifier la gestion des connexion grâce à la mise à disposition
-         * d'events. Elle repose entièrement sur la classe Socket. Elle s'occupe principalement de l'envoi et la réception 
-         * de données. Elle est utilisée dans la classe AsyncServer pour représenter les clients connéctés.
-         * A titre d'exemple on déclare ses propres delegates. On aurait très bien pu se contenter des delegates existants
-         * EventHandler<T> du namespace System.
-         */
-
         public delegate void ClientConnectedHandler(Client client);
         public delegate void DataSendHandler(Client client);
         public delegate void DataReceivedHandler(Client client, object data);
@@ -35,12 +28,10 @@ namespace Tetris_ServerApp
 
         private Socket clientSocket;
 
+        public bool ready = false;
+
         #region Constructors
-        /* La construction d'un AsyncClient revient à instancier un objet Socket sur lequel se fera la connexion et 
-         * l'échange de connées. Il faudra attendre l'appel à la méthode Connect avant de commencer l'échange de données.
-         * Si la construction se fait à partir d'un soket ou d'un autre AsyncClient, on tente tout de suite la réception 
-         * de données, au cas ou la connexion était déjà établie.
-         */
+     
         public Client()
         {
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -196,7 +187,11 @@ namespace Tetris_ServerApp
                 else
                 {
                     object data = receiveBuffer.Deserialize();
-                    onDataReceived(data);
+                    if (data != null)
+                    {
+                        onDataReceived(data);
+                        
+                    }
                     receiveData();
                 }
             }

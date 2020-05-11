@@ -56,7 +56,7 @@ namespace Tetris_ServerApp
             remoteClients.Add(client);
             updateClientCount();
             addClientToListBox(client);
-            //monitorServerMessages.AddMessage("Client Connected -> " + client.ClientSocket.RemoteEndPoint);
+            monitorServerMessages.AddMessage("Client Connected -> " + client.ClientSocket.RemoteEndPoint);
         }
 
         private void addClientToListBox(Client client)
@@ -103,6 +103,22 @@ namespace Tetris_ServerApp
                         
                     remoteClients[remoteClients.IndexOf(client)].Send(chanel.ToString());
                 }
+                else if ((String)data == "ready")
+                {
+                    remoteClients[remoteClients.IndexOf(client)].ready = true;
+                    foreach(Channel ch in PlayingChannels)
+                    //for (int i = 0; i < PlayingChannels.Count; i++)
+                    {
+                        foreach (Client cl in ch.remoteClients)
+                        {
+                            if (cl == client)
+                            {
+                                //Start if all client are ready
+                                ch.start();
+                            }
+                        }
+                    }
+                }
             }
             else if (data is byte[])
             {
@@ -116,6 +132,8 @@ namespace Tetris_ServerApp
                         if (PlayingChannels[i].AddPlayer(remoteClients[remoteClients.IndexOf(client)]))
                         {
                             remoteClients[remoteClients.IndexOf(client)].DataReceived -= RemoteClient_DataReceived;
+
+                            monitorServerMessages.AddMessage(client.ClientSocket.RemoteEndPoint + "Join the channel " + stCode );
                         }
                         return;
                     }
@@ -123,7 +141,6 @@ namespace Tetris_ServerApp
                 Channel chan = new Channel(Int32.Parse(stCode));
                 chan.AddPlayer(client);
                 PlayingChannels.Add(chan);
-                Console.WriteLine(stCode);
             }
             else
             {
@@ -133,14 +150,25 @@ namespace Tetris_ServerApp
                 //remoteClients[remoteClients.IndexOf(client)].Send(data);
                 //TODO: envoyer sur le bon channel
             }
-            //monitorServerMessages.AddMessage("data sent from " + client.ClientSocket.RemoteEndPoint + " to " + remoteClients[nextClientIndex].ClientSocket.RemoteEndPoint);
         }
         private void RemoteClient_ClientDisconnected(Client client, string message)
         {
             remoteClients.Remove(client);
+            //PlayingChannels[]
+
+            for (int i = 0; i < PlayingChannels.Count; i++)
+            {
+                for (int j = 0; j < PlayingChannels[i].remoteClients.Count; j++)
+                //foreach (Client cl in PlayingChannels[i].remoteClients)
+                {
+                    if (PlayingChannels[i].remoteClients[j] == client)
+                        PlayingChannels[i].removeClient(client);
+                }
+                
+            }
             removeClientFromListBox(client);
             updateClientCount();
-            //monitorServerMessages.AddMessage("Client Disconnected -> " + client.ClientSocket.RemoteEndPoint);
+            monitorServerMessages.AddMessage("Client Disconnected -> " + client.ClientSocket.RemoteEndPoint);
         }
 
         private void Server_ServerStopped()
@@ -153,7 +181,7 @@ namespace Tetris_ServerApp
         private void Server_ServerStarted()
         {
             btnStartServer.Text = "Stop Server";
-            //monitorServerMessages.AddMessage("Server listening on : " + server.listenSocket.LocalEndPoint);
+            monitorServerMessages.AddMessage("Server listening on : " + server.listenSocket.LocalEndPoint);
             labelServerStatus.Text = "Server listening on : " + server.listenSocket.LocalEndPoint;
         }
 

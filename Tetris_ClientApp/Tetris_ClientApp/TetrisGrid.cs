@@ -14,21 +14,31 @@ namespace Tetris_ClientApp
         public int rectSize = 10;
         public int numLines = 10;
         public int numCols = 10;
+
+        int lines = 0;
+        int x2 = 0;
+        int x3 = 0;
+        int x4 = 0;
+
+        public int score { get; set; }
+
+        public Label[,] labelsBlock { get; set; }
         
-
-
-
-        System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
-        public int lines = 0, x2 = 0, x3 = 0, x4 = 0;
-        int next = 0;
-        int level = 1;
-        public Label[,] labelsBlock;
+        private int px;
+        private int py;
+        private int next = 0;
+        private int level = 1;
         bool game = false;
+
         Pen[] pens = new Pen[9];
         Brush[] brushes = new Brush[9];
-        int px, py;
         Figure figure, nf;
+        
+        private Timer _timer = new Timer();
 
+        public event EventHandler FigureMovedDown;
+        public event EventHandler ScoreChanged;
+        public event EventHandler GameOver;
 
         public TetrisGrid(int width, int height, int rows, int cols)
         {
@@ -41,122 +51,141 @@ namespace Tetris_ClientApp
             drawGrid(rows, cols);
 
             setfigure();
-            for (int i = 0; i < rows; i++)
-                for (int j = 0; j < cols; j++)
-                    labelsBlock[i, j].BackColor = Color.Black;
-            myTimer.Interval = (int)(100 / (level * 1));
-            myTimer.Start();
+            
+            _timer = new Timer();
+            _timer.Interval = (int)(300 / (level * 0.7));
+            _timer.Tick += new EventHandler(TimerTick);
         }
         public void stop()
         {
             game = false;
-            Console.WriteLine("STOP");
+            _timer.Stop();
+            //Console.WriteLine("STOP");
+            /*if(GameOver != null)
+            {
+                GameOver(this,EventArgs.Empty);
+            }*/
             //myTimer.Stop();
+        }
+        public void start()
+        {
+            game = true;
+            setfigure();
+            resetGrid();
+            //_timer.Interval = (int)(100 / (level * 0.7));
+            _timer.Start();
+            
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+           //Console.WriteLine("tick");
+            updateGrid();
         }
 
         public void updateGrid()
         {
-            moveDown();
-            if (!check(figure, px, py)) stop();
-            //Refresh();
+            if (game)
+            {
+                if (!moveDown())
+                {
+                    stop();
+                    
+                    if (GameOver != null)
+                    {
+                        GameOver(this, EventArgs.Empty);
+                    }
+                }
+            }
         }
         void setfigure()
         {
             Random rnd = new Random();
-            if (next == 0) { next = rnd.Next(1, 8); setfigure(); return; }
+            /*if (next == 0) 
+            { 
+                next = rnd.Next(1, 7); 
+                setfigure(); return;
+            }
             int i = next;
-            next = rnd.Next(1, 8);
-
-            if (!(i > 0 && i < 9)) return;
+            */
+            int i = next;
+            next = rnd.Next(0, 7);
+            if (!(i > 0 && i < 8)) return;
             figure = new Figure(i);
             nf = new Figure(next);
-            //figure = copyfigure(figures[i]);
-            //nf = copyfigure(figures[next]);
-            py = -1;
+            py = 0;
             px = 4;
         }
-        int conversize(int sz)
-        {
-            int s = 0;
-            if (sz == 4) s = 2;
-            if (sz == 9) s = 3;
-            if (sz == 16) s = 4;
-            return s;
-        }
-        int[,] copyfigure(int[,] f)
-        {
-            int sz = conversize(f.Length);
-            int[,] ff = new int[sz, sz];
-            for (int k = 0; k < sz; k++)
-                for (int j = 0; j < sz; j++)
-                    ff[k, j] = f[k, j];
-            return ff;
-        }
+        
         public void drop()
         {
-            while (moveDown()) ;
+            if (game)
+            {
+                while (moveDown()) ;
+            }
+            //FigureMoved(this, EventArgs.Empty);
             //Refresh();
         }
         public void moveLeft()
         {
-            erasefigure(figure, px, py);
-            if (check(figure, px - 1, py))
+            if (game)
             {
-                //Console.WriteLine("OK");
-                px--;
-                //Console.WriteLine("draw by moveleft");
+                erasefigure(figure, px, py);
+                if (check(figure, px - 1, py))
+                {
+                    px--;
+                }
+                drawfigure(figure, px, py);
             }
-            drawfigure(figure, px, py);
-            //Refresh();
         }
         public void moveRight()
         {
-            erasefigure(figure, px, py);
-            if (check(figure, px + 1, py))
+            if (game)
             {
-                //Console.WriteLine("draw by moveright");
-                px++;
+                erasefigure(figure, px, py);
+                if (check(figure, px + 1, py))
+                {
+                    px++;
+                    //FigureMoved(this, EventArgs.Empty);
+                }
+                drawfigure(figure, px, py);
             }
-            drawfigure(figure, px, py);
-            //Refresh();
         }
 
         public void rotate()
         {
-            int sz = conversize(figure.figure.Length);
-            Figure ff = new Figure();
-            ff.figure = new int[sz, sz];
-            ff.colorFigure = figure.colorFigure;
-            //int[,] ff = new int[sz, sz];
-            erasefigure(figure, px, py);
-
-            if (sz != 4)
+            if (game)
             {
-                for (int k = 0; k < sz; k++)
-                    for (int j = 0; j < sz; j++)
-                    {
-                        ff.figure[j, (sz - 1) - k] = figure.figure[k, j];
-                    }
-            }
-            else
-            {
-                for (int k = 0; k < sz; k++)
-                    for (int j = sz - 1; j >= 0; j--)
-                        ff.figure[k, j] = figure.figure[j, k];
-            }
-            if (check(ff, px, py))
-            {
+                int sz = figure.size;
+                Figure ff = new Figure();
+                ff.figure = new int[sz, sz];
+                ff.colorFigure = figure.colorFigure;
+                ff.size = figure.size;
+                erasefigure(figure, px, py);
 
-                figure = ff;//copyfigure(ff.figure);
-
-                drawfigure(figure, px, py);
+                if (sz != 4){
+                    for (int k = 0; k < sz; k++)
+                        for (int j = 0; j < sz; j++)
+                        {
+                            ff.figure[j, (sz - 1) - k] = figure.figure[k, j];
+                        }
+                }
+                else{
+                    for (int k = 0; k < sz; k++)
+                        for (int j = sz - 1; j >= 0; j--)
+                            ff.figure[k, j] = figure.figure[j, k];
+                }
+                if (check(ff, px, py)){
+                    figure = ff;
+                    drawfigure(figure, px, py);
+                }
             }
         }
         private bool moveDown()
         {
             //labelsBlock[4, 4].BackColor = Color.Blue;
             //erase figure
-            int sz = conversize(figure.figure.Length);
+            int sz = (int)Math.Sqrt(figure.figure.Length);
 
             erasefigure(figure, px, py);
             if (check(figure, px, py + 1))
@@ -166,16 +195,17 @@ namespace Tetris_ClientApp
                 drawfigure(figure, px, py);
 
                 //Console.WriteLine(px.ToString() + ";" + py.ToString());
-
+                if (FigureMovedDown != null)
+                    FigureMovedDown(this, EventArgs.Empty);
                 return true;
             }
             else
             {
                 drawfigure(figure, px, py);
             }
-            //Console.WriteLine(py.ToString() + px.ToString());
-
+            
             int count = 0;
+
             for (int j = 1; j < 20; j++)
             {
                 bool full = true;
@@ -189,21 +219,28 @@ namespace Tetris_ClientApp
                     count++;
                     for (int k = j; k > 0; k--)
                         for (int i = 0; i < 10; i++)
-                                labelsBlock[k, i].BackColor = labelsBlock[k-1, i].BackColor;//Color.Blue;//board[i, k] = board[i, k - 1];
+                                labelsBlock[k, i].BackColor = labelsBlock[k-1, i].BackColor;
                 }
                 full = true;
             }
+
             setfigure();
-            if (lines % 20 == 0 && lines != 0 && (level - 1) * 20 != lines) level++;//start(level + 1);
-            if (count == 2) x2++;
-            if (count == 3) x3++;
-            if (count == 4) x4++;
+
+            if (lines % 20 == 0 && lines != 0 && (level - 1) * 20 != lines) level++;
+
+            if (count == 1) score += (10 * count);
+            if (count == 2) score += (20 * count);
+            if (count == 3) score += (30 * count);
+
+            if (ScoreChanged != null)
+                ScoreChanged(this, EventArgs.Empty);
+
             return false;
         }
 
         void drawfigure(Figure fg, int x, int y)
         {
-            int sz = conversize(fg.figure.Length);
+            int sz = figure.size;
 
             for (int i = 0; i < sz; i++)
             {
@@ -224,7 +261,7 @@ namespace Tetris_ClientApp
 
         void erasefigure(Figure fg, int x, int y)
         {
-            int sz = conversize(fg.figure.Length);
+            int sz = figure.size;
 
             for (int i = 0; i < sz; i++)
             {
@@ -244,30 +281,25 @@ namespace Tetris_ClientApp
         bool check(Figure fg, int x, int y)
         {
             bool ret = true;
-            int sz = conversize(fg.figure.Length);
+            int sz = figure.size;
             for (int i = sz - 1; i > -1; i--)
                 for (int j = 0; j < sz; j++)
                 {
                     int rx = j + x;
                     int ry = i + y;
                     //Console.WriteLine(rx.ToString(),ry.ToString());
-                    if ((ry < 0 || ry > 19 || rx < 0 || rx > 9 ) && fg.figure[i, j] != 0)
-                        ret = false;
-
-                    if(ret == true)
+                    if ((rx < 0 || rx > 9 || ry < 0 || ry > 19) && fg.figure[i, j] != 0)
+                        return false;
+                    if (!(rx < 0 || rx > 9 || ry < 0 || ry > 19))
                     {
-                        if (!(ry < 0 || ry > 19 || rx < 0 || rx > 9))
+                        if (fg.figure[i, j] != 0)
                         {
-                            if (fg.figure[i, j] != 0)
-                            {
-                                if (labelsBlock[ry, rx].BackColor != Color.Black)
-                                    ret = false;
-                            }
+                            if (labelsBlock[ry, rx].BackColor != Color.Black)
+                                return false;
                         }
                     }
-                    
                 }
-            return ret;
+            return true;
         }
 
         private void drawGrid(int rows, int cols)
@@ -295,7 +327,17 @@ namespace Tetris_ClientApp
                 }
                 
             }
-            
+        }
+
+        private void resetGrid()
+        {
+            for(int i = 0; i < 20; i++) 
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    labelsBlock[i,j].BackColor = Color.Black;
+                }
+            }
         }
 
         
@@ -303,6 +345,7 @@ namespace Tetris_ClientApp
         {
             public int[,] figure;
             public Color colorFigure;
+            public int size = 0;
             List<Color> ColorList = new List<Color>();
             Random rnd = new Random();
             public Figure(int num)
@@ -312,19 +355,20 @@ namespace Tetris_ClientApp
                 ColorList.Add(Color.Green);
                 ColorList.Add(Color.DarkMagenta);
                 ColorList.Add(Color.Aqua);
-                ColorList.Add(Color.Coral);
+                //ColorList.Add(Color.Coral);
                 ColorList.Add(Color.Red);
                 ColorList.Add(Color.Blue);
                 //int random = rnd.Next(0, ColorList.Count);
                 figure = figures[num];
                 colorFigure = ColorList[num];
+                size = (int)Math.Sqrt(figure.Length);
             }
 
             public Figure()
             {
             }
 
-            public static int[][,] figures = new int[8][,]
+            public static int[][,] figures = new int[7][,]
             {
                 new int[3,3]
                 {
@@ -351,30 +395,23 @@ namespace Tetris_ClientApp
                 },
                     new int[3,3]
                 {
-                {5,0,0},
-                {5,0,0},
-                {5,5,0}
+                {0,0,0},
+                {0,0,5},
+                {5,5,5}
                 },
                     new int[3,3]
                 {
-                {0,6,0},
-                {0,6,0},
-                {6,6,0}
+                {0,0,0},
+                {6,0,0},
+                {6,6,6}
                 },
                     new int[4,4]
                 {
-                {7,7,7,7},
-                {0,0,0,0},
-                {0,0,0,0},
-                {0,0,0,0}
-                },
-                    new int[3,3]
-                {
-                {0,8,0},
-                {8,8,8},
-                {0,0,0}
+                {7,0,0,0},
+                {7,0,0,0},
+                {7,0,0,0},
+                {7,0,0,0}
                 }
-
             };
         }
     }

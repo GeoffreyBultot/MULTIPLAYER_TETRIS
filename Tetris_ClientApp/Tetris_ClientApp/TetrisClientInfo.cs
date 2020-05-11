@@ -12,7 +12,8 @@ namespace Tetris_ClientApp
     {
 
         public Color[,] tbColors { get; set; }
-
+        public int score;
+        
         public TetrisClientInfo()
         {
 
@@ -25,6 +26,7 @@ namespace Tetris_ClientApp
             int rows = tg.numLines;
             int cols = tg.numCols;
             this.tbColors = new Color[rows,cols];
+            score = tg.score;
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < cols; j++)

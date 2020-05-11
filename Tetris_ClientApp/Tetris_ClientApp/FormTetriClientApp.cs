@@ -15,7 +15,8 @@ namespace Tetris_ClientApp
         Client remoteServer;
         TetrisGrid gridPlayerMe;
         TetrisGrid gridPlayerRival;
-        private Timer _timer = new Timer();
+        delegate void PrintHandler(Label label, string msgToPrint);
+        delegate void TimerHandler();
         public formTetrisClientApp()
         {
             InitializeComponent();
@@ -31,9 +32,6 @@ namespace Tetris_ClientApp
 
             this.Controls.Add(gridPlayerMe);
             this.Controls.Add(gridPlayerRival);
-            _timer = new Timer();
-            _timer.Interval = 300;
-            _timer.Tick += new EventHandler(TimerTick);
 
             serverConnection.ShowDialog();
             if (serverConnection.DialogResult == DialogResult.OK)
@@ -47,37 +45,64 @@ namespace Tetris_ClientApp
                 byte[] codeChannel = Encoding.ASCII.GetBytes(serverConnection.stCode);
                 remoteServer.Send(codeChannel);
 
-                Console.WriteLine("ok");
+                gridPlayerMe.FigureMovedDown += onFigureMovedDown;
+                gridPlayerMe.ScoreChanged += onScoreChanged;
+                gridPlayerMe.GameOver += onGameOver;
             }
             else if(serverConnection.DialogResult == DialogResult.Cancel)
             {
                 Console.WriteLine("ouioui");
-                //remoteServer.Disconnect();
-                //serverConnection.Close();
-                //this.Close();
+                //TODO : fermer le programme
             }
-            
         }
 
-        private void TimerTick(object sender, EventArgs e)
+        private void onScoreChanged(object sender, EventArgs e)
         {
+            if (sender is TetrisGrid)
+            {
 
-            
-            //Console.WriteLine("Tick");
+                PrintHandler p = new PrintHandler(printScore);
+
+                String strScore = "";
+                if ((TetrisGrid)sender == gridPlayerMe)
+                {
+                    strScore = "score : " + gridPlayerMe.score.ToString();
+                    this.Invoke(p, lblScoreMe, strScore);
+                }
+                else if ((TetrisGrid)sender == gridPlayerRival)
+                {
+                    strScore = "score : " + gridPlayerRival.score.ToString();
+                    this.Invoke(p, lblScoreRival, strScore);
+                }
+            }
+        }
+
+        private void onGameOver(object sender, EventArgs e)
+        {
+            Console.WriteLine("GameOver");
+            remoteServer.Send("gameOver");
+        }
+
+        private void printScore(Label label, string msgToPrint)
+        {
+            label.Text = msgToPrint;
+        }
+
+        private void onFigureMovedDown(object sender, EventArgs e)
+        {
             if (remoteServer != null)
                 if (remoteServer.ClientSocket.Connected)
                 {
-                    //Console.WriteLine("send");
                     TetrisClientInfo info = new TetrisClientInfo(gridPlayerMe);
                     remoteServer.Send(info);
                 }
-            gridPlayerMe.updateGrid();
-
         }
 
         private void btnAbandonner_Click(object sender, EventArgs e)
         {
-            _timer.Enabled = true;
+            //gridPlayerMe.start();
+            remoteServer.ready = true;
+            remoteServer.Send("ready");
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -109,29 +134,51 @@ namespace Tetris_ClientApp
 
         private void RemoteServer_DataReceived(Client client, object data)
         {
-            //Console.WriteLine("c arrive");
             if (data is String)
             {
-                String test = (String)data;
-                Console.WriteLine(test);
+                if ((String)data == "start")
+                {
+                    TimerHandler p = new TimerHandler(startTimerGridMe);
+                    this.Invoke(p);
+                }
+                else if ((String)data == "gameOver")
+                {
+                    Console.WriteLine("Adversaire game over");
+                    TimerHandler p = new TimerHandler(StopTimerGridMe);
+                    this.Invoke(p);
+                }
             }
             else
             {
                 TetrisClientInfo info = (TetrisClientInfo)data;
-                //Console.WriteLine("other");
                  
                 int rows = gridPlayerRival.numLines;
                 int cols = gridPlayerRival.numCols;
-                //this.tbColors = new Color[rows, cols];
+
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = 0; j < cols; j++)
                     {
                         gridPlayerRival.labelsBlock[i, j].BackColor = info.tbColors[i,j];
-                    }//this.BackColor = s.BackColor;
-
+                    }
                 }
+
+                gridPlayerRival.score = info.score;
+                onScoreChanged(gridPlayerRival, EventArgs.Empty);
+
+
+
             }
+        }
+
+        private void StopTimerGridMe()
+        {
+            gridPlayerMe.stop();
+        }
+
+        private void startTimerGridMe()
+        {
+            gridPlayerMe.start();
         }
 
         private void RemoteServer_ClientConnected(Client client)

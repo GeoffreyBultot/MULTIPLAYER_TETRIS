@@ -34,14 +34,16 @@ namespace Tetris_ClientApp
             remoteServer.ClientDisconnected += RemoteServer_ClientDisconnected;
             remoteServer.ConnectionRefused += RemoteServer_ConnectionRefused;
 
-            txtBoxServerIP.Text = localIP.AddressList[0].ToString();
+            txtBoxServerIP.Text = localIP.AddressList[0].ToString();//"192.168.0.6";//localIP.AddressList[0].ToString();
+            Console.WriteLine(localIP.AddressList[0]);
             clientSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
             //Console.WriteLine(localIP.AddressList[0].ToString());
 
             //ep = new IPEndPoint(IPAddress.Parse(localIP.AddressList[0].ToString()), 2600);
 
-            remoteServer.Connect(localIP.AddressList[0].ToString(), 2600);
+            remoteServer.Connect(localIP.AddressList[0].ToString(), 2600);//"192.168.0.6", 2600);
         }
+
 
         private void btnGetCode_Click(object sender, EventArgs e)
         {
