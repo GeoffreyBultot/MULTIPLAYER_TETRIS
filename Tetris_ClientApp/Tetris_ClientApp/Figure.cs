@@ -15,7 +15,7 @@ namespace Tetris_ClientApp
         Random rnd = new Random();
         public Figure()
         {
-            int num = rnd.Next(0, 6);
+            int num = rnd.Next(0, 7);
             figure = figures[num];
             colorFigure = colors[num];
             size = (int)Math.Sqrt(figure.Length);

@@ -38,9 +38,6 @@
             this.btnSend = new System.Windows.Forms.Button();
             this.txtBoxChat = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.tetrisGrid1 = new Tetris_ClientApp.TetrisGrid();
-            this.tetrisGrid2 = new Tetris_ClientApp.TetrisGrid();
-            this.tetrisGridd = new Tetris_ClientApp.TetrisGrid();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -148,33 +145,6 @@
             this.textBox1.Size = new System.Drawing.Size(181, 65);
             this.textBox1.TabIndex = 206;
             // 
-            // tetrisGrid1
-            // 
-            this.tetrisGrid1.BackColor = System.Drawing.Color.DarkGray;
-            this.tetrisGrid1.Location = new System.Drawing.Point(473, 98);
-            this.tetrisGrid1.Name = "tetrisGrid1";
-            this.tetrisGrid1.score = 0;
-            this.tetrisGrid1.Size = new System.Drawing.Size(300, 600);
-            this.tetrisGrid1.TabIndex = 207;
-            // 
-            // tetrisGrid2
-            // 
-            this.tetrisGrid2.BackColor = System.Drawing.Color.DarkGray;
-            this.tetrisGrid2.Location = new System.Drawing.Point(79, 98);
-            this.tetrisGrid2.Name = "tetrisGrid2";
-            this.tetrisGrid2.score = 0;
-            this.tetrisGrid2.Size = new System.Drawing.Size(300, 600);
-            this.tetrisGrid2.TabIndex = 208;
-            // 
-            // tetrisGridd
-            // 
-            this.tetrisGridd.BackColor = System.Drawing.Color.DarkGray;
-            this.tetrisGridd.Location = new System.Drawing.Point(473, 98);
-            this.tetrisGridd.Name = "tetrisGridd";
-            this.tetrisGridd.score = 0;
-            this.tetrisGridd.Size = new System.Drawing.Size(300, 600);
-            this.tetrisGridd.TabIndex = 207;
-            // 
             // formTetrisClientApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -182,20 +152,21 @@
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1088, 785);
+            this.ClientSize = new System.Drawing.Size(1088, 707);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.txtBoxChat);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.tetrisGridd);
             this.Controls.Add(this.lblScoreRival);
             this.Controls.Add(this.lblScoreMe);
             this.Controls.Add(this.lblYOU);
             this.Controls.Add(this.btnAbandonner);
             this.Controls.Add(this.lblRival);
-            this.Controls.Add(this.tetrisGrid2);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "formTetrisClientApp";
-            this.Text = "Tetris Client Application";
+            this.ShowIcon = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.Text = "MULTIPLAYER TETRIS";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -208,16 +179,10 @@
         private System.Windows.Forms.Label lblYOU;
         private System.Windows.Forms.Label lblScoreMe;
         private System.Windows.Forms.Label lblScoreRival;
-        private TetrisGrid gridPlayerMe;
-        private TetrisGrid gridPlayerRival;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button btnSend;
-        private System.Windows.Forms.TextBox txtBoxMessage;
         private System.Windows.Forms.TextBox txtBoxChat;
         private System.Windows.Forms.TextBox textBox1;
-        private TetrisGrid tetrisGrid1;
-        private TetrisGrid tetrisGrid2;
-        private TetrisGrid tetrisGridd;
     }
 }
 
