@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace Tetris_ClientApp
         
         private int px;
         private int py;
-        private int next = 0;
+
         private int level = 1;
         bool game = false;
 
@@ -42,7 +43,6 @@ namespace Tetris_ClientApp
 
         public TetrisGrid(int width, int height, int rows, int cols)
         {
-            
             this.Height = height;
             this.Width = width;
             this.BackColor = Color.DarkGray;
@@ -60,13 +60,18 @@ namespace Tetris_ClientApp
         {
             game = false;
             _timer.Stop();
-            //Console.WriteLine("STOP");
-            /*if(GameOver != null)
+            if(GameOver != null)
             {
                 GameOver(this,EventArgs.Empty);
-            }*/
-            //myTimer.Stop();
+            }
         }
+
+        public void asyncstopGrid()
+        {
+            _timer.Stop();
+            game = false;
+        }
+
         public void start()
         {
             game = true;
@@ -74,12 +79,10 @@ namespace Tetris_ClientApp
             resetGrid();
             //_timer.Interval = (int)(100 / (level * 0.7));
             _timer.Start();
-            
         }
 
         private void TimerTick(object sender, EventArgs e)
         {
-           //Console.WriteLine("tick");
             updateGrid();
         }
 
@@ -90,30 +93,15 @@ namespace Tetris_ClientApp
                 if (!moveDown())
                 {
                     stop();
-                    
-                    if (GameOver != null)
-                    {
-                        GameOver(this, EventArgs.Empty);
-                    }
                 }
             }
         }
+
         void setfigure()
         {
-            Random rnd = new Random();
-            /*if (next == 0) 
-            { 
-                next = rnd.Next(1, 7); 
-                setfigure(); return;
-            }
-            int i = next;
-            */
-            int i = next;
-            next = rnd.Next(0, 7);
-            if (!(i > 0 && i < 8)) return;
-            figure = new Figure(i);
-            nf = new Figure(next);
-            py = 0;
+            figure = nf;
+            nf = new Figure();
+            py = -1;
             px = 4;
         }
         
@@ -183,10 +171,8 @@ namespace Tetris_ClientApp
         }
         private bool moveDown()
         {
-            //labelsBlock[4, 4].BackColor = Color.Blue;
-            //erase figure
-            int sz = (int)Math.Sqrt(figure.figure.Length);
-
+            //int sz = (int)Math.Sqrt(figure.figure.Length);
+            int sz = figure.size;
             erasefigure(figure, px, py);
             if (check(figure, px, py + 1))
             {
@@ -338,81 +324,6 @@ namespace Tetris_ClientApp
                     labelsBlock[i,j].BackColor = Color.Black;
                 }
             }
-        }
-
-        
-        class Figure
-        {
-            public int[,] figure;
-            public Color colorFigure;
-            public int size = 0;
-            List<Color> ColorList = new List<Color>();
-            Random rnd = new Random();
-            public Figure(int num)
-            {
-                ColorList.Add(Color.Cyan);
-                ColorList.Add(Color.DarkOrange);
-                ColorList.Add(Color.Green);
-                ColorList.Add(Color.DarkMagenta);
-                ColorList.Add(Color.Aqua);
-                //ColorList.Add(Color.Coral);
-                ColorList.Add(Color.Red);
-                ColorList.Add(Color.Blue);
-                //int random = rnd.Next(0, ColorList.Count);
-                figure = figures[num];
-                colorFigure = ColorList[num];
-                size = (int)Math.Sqrt(figure.Length);
-            }
-
-            public Figure()
-            {
-            }
-
-            public static int[][,] figures = new int[7][,]
-            {
-                new int[3,3]
-                {
-                {0,0,0},
-                {0,1,0},
-                {1,1,1}
-                },
-                new int[3,3]
-                {
-                {0,0,0},
-                {0,2,2},
-                {2,2,0}
-                },
-                new int[3,3]
-                {
-                {0,0,0},
-                {3,3,0},
-                {0,3,3}
-                },
-                    new int[2,2]
-                {
-                {4,4},
-                {4,4}
-                },
-                    new int[3,3]
-                {
-                {0,0,0},
-                {0,0,5},
-                {5,5,5}
-                },
-                    new int[3,3]
-                {
-                {0,0,0},
-                {6,0,0},
-                {6,6,6}
-                },
-                    new int[4,4]
-                {
-                {7,0,0,0},
-                {7,0,0,0},
-                {7,0,0,0},
-                {7,0,0,0}
-                }
-            };
         }
     }
 }

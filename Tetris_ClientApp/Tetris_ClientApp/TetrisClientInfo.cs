@@ -14,11 +14,6 @@ namespace Tetris_ClientApp
         public Color[,] tbColors { get; set; }
         public int score;
         
-        public TetrisClientInfo()
-        {
-
-        }
-
 
         public TetrisClientInfo(TetrisGrid tg)
         {

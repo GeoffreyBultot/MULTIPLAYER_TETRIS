@@ -35,13 +35,7 @@ namespace Tetris_ClientApp
             remoteServer.ConnectionRefused += RemoteServer_ConnectionRefused;
 
             txtBoxServerIP.Text = localIP.AddressList[0].ToString();//"192.168.0.6";//localIP.AddressList[0].ToString();
-            Console.WriteLine(localIP.AddressList[0]);
-            clientSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            //Console.WriteLine(localIP.AddressList[0].ToString());
-
-            //ep = new IPEndPoint(IPAddress.Parse(localIP.AddressList[0].ToString()), 2600);
-
-            remoteServer.Connect(localIP.AddressList[0].ToString(), 2600);//"192.168.0.6", 2600);
+            
         }
 
 
@@ -57,14 +51,40 @@ namespace Tetris_ClientApp
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            remoteServer.ClientConnected -= RemoteServer_ClientConnected;
-            remoteServer.DataReceived -= RemoteServer_DataReceived;
-            remoteServer.ClientDisconnected -= RemoteServer_ClientDisconnected;
-            remoteServer.ConnectionRefused -= RemoteServer_ConnectionRefused;
-            stCode = textBox1.Text;
-            DialogResult = DialogResult.OK;
+            
+            if (remoteServer.ClientSocket.Connected)
+            {
+                remoteServer.Disconnect();
+                btnConnect.Text = "Connect";
+            }
+            else
+            {
+                clientSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+                remoteServer.Connect(localIP.AddressList[0].ToString(), 2600);//"192.168.0.6", 2600);
+                Task.Delay(1000).ContinueWith(t => CheckServerConnected());
+            }
         }
 
+
+        void CheckServerConnected()
+        {
+            //if (remoteServer.ClientSocket.Connected).
+                //TODO//btnConnect.Text = "Disconnect";
+        }
+        private void btnGoGame_Click(object sender, EventArgs e)
+        {
+            bool isNumeric = int.TryParse(txtBoxCode.Text, out int n);
+
+            if (remoteServer.ClientSocket.Connected && isNumeric)
+            {
+                remoteServer.ClientConnected -= RemoteServer_ClientConnected;
+                remoteServer.DataReceived -= RemoteServer_DataReceived;
+                remoteServer.ClientDisconnected -= RemoteServer_ClientDisconnected;
+                remoteServer.ConnectionRefused -= RemoteServer_ConnectionRefused;
+                stCode = txtBoxCode.Text;
+                DialogResult = DialogResult.OK;
+            }
+        }
         private void btnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
@@ -111,10 +131,10 @@ namespace Tetris_ClientApp
         private void printClientInfo(string msgToPrint)
         {
             lblCodeReceived.Text = "Code: " + msgToPrint;
-            textBox1.Text = msgToPrint;
+            txtBoxCode.Text = msgToPrint;
             //throw new NotImplementedException();
         }
-    private void RemoteServer_ClientConnected(Client client)
+        private void RemoteServer_ClientConnected(Client client)
         {
             //labelClientStatus.Text = "You are connected to " + client.ClientSocket.RemoteEndPoint;
         }
@@ -126,6 +146,5 @@ namespace Tetris_ClientApp
             this.Close();
         }
 
-        
     }
 }

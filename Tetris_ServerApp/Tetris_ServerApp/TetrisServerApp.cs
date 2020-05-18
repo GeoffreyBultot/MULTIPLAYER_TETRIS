@@ -30,14 +30,6 @@ namespace Tetris_ServerApp
         private void button1_Click(object sender, EventArgs e)
         {
             label1.Text = localIP.AddressList[0].ToString();
-            /*ep = new IPEndPoint(IPAddress.Parse(localIP.AddressList[0].ToString()), 2600);
-            listener = new Socket(SocketType.Stream, ProtocolType.Tcp);
-            listener.Bind(ep);
-            listener.Listen(0);
-            acceptClients();
-            Console.WriteLine("ServerStart");
-            //onServerStarted();
-            */
             server = new Server(localIP.AddressList[0].ToString(), 2600);
             server.ServerStarted += Server_ServerStarted;
             server.ServerStopped += Server_ServerStopped;

@@ -14,6 +14,8 @@ namespace Tetris_ServerApp
         private const int maxPlayer = 2;
         public List<Client> remoteClients = new List<Client>();
         private bool inGame = false;
+
+        private const int NUM_PLAYERS_COMPLETE_CHANNEL = 2;
         public Channel()
         { 
         }
@@ -44,7 +46,8 @@ namespace Tetris_ServerApp
                 return false;
             }
             else
-            { if (!(remoteClients.Count >= 1))
+            { 
+                if (!(remoteClients.Count == NUM_PLAYERS_COMPLETE_CHANNEL))
                 {
                     return false;
                 }
