@@ -41,6 +41,22 @@ namespace Tetris_ClientApp
         public event EventHandler ScoreChanged;
         public event EventHandler GameOver;
 
+        public TetrisGrid()
+        {
+            this.Height = 600;
+            this.Width = 300;
+            this.BackColor = Color.DarkGray;
+            numLines = 20;
+            numCols = 10;
+            drawGrid(numLines, numCols);
+
+            setfigure();
+
+            _timer = new Timer();
+            _timer.Interval = (int)(300 / (level * 0.7));
+            _timer.Tick += new EventHandler(TimerTick);
+        }
+
         public TetrisGrid(int width, int height, int rows, int cols)
         {
             this.Height = height;
@@ -51,11 +67,12 @@ namespace Tetris_ClientApp
             drawGrid(rows, cols);
 
             setfigure();
-            
+
             _timer = new Timer();
             _timer.Interval = (int)(300 / (level * 0.7));
             _timer.Tick += new EventHandler(TimerTick);
         }
+
         public void stop()
         {
             game = false;

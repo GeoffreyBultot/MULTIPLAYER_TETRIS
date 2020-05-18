@@ -25,6 +25,8 @@ namespace Tetris_ServerApp
 
             while (Lines.Length > NumberOfLines + 1)
                 Text = Text.Remove(0, Lines[0].Length + 2);
+            NumberOfLines++;
         }
+
     }
 }

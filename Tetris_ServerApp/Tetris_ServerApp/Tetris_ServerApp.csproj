@@ -89,5 +89,13 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Datas\IMG\btn_Start.png" />
+    <Content Include="Datas\IMG\LogoIsib.jpg" />
+    <Content Include="Datas\IMG\LogoIsib.png" />
+    <Content Include="Datas\IMG\start_logo.png" />
+    <Content Include="Datas\IMG\stop_logo.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

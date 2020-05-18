@@ -14,9 +14,8 @@ namespace Tetris_ClientApp
     public partial class formTetrisClientApp : Form
     {
         Client remoteServer;
-        TetrisGrid gridPlayerMe;
-        TetrisGrid gridPlayerRival;
         delegate void PrintHandler(Label label, string msgToPrint);
+        delegate void PrintMessageHandler(TextBox txtbox, string msgToPrint);
         delegate void RivalGameOverHandler();
         delegate void TimerHandler();
         PrivateFontCollection pfc = new PrivateFontCollection();
@@ -41,9 +40,9 @@ namespace Tetris_ClientApp
                 byte[] codeChannel = Encoding.ASCII.GetBytes(serverConnection.stCode);
                 remoteServer.Send(codeChannel);
 
-                gridPlayerMe.FigureMovedDown += onFigureMovedDown;
-                gridPlayerMe.ScoreChanged += onScoreChanged;
-                gridPlayerMe.GameOver += onGameOver;
+                tetrisGrid2.FigureMovedDown += onFigureMovedDown;
+                tetrisGrid2.ScoreChanged += onScoreChanged;
+                tetrisGrid2.GameOver += onGameOver;
             }
             else //if(serverConnection.DialogResult == DialogResult.Cancel)
             {
@@ -53,24 +52,14 @@ namespace Tetris_ClientApp
 
 
         void InitGraphics()
-        {//TODO
+        {
             Console.WriteLine(Application.StartupPath);
             pfc.AddFontFile(Application.StartupPath+"\\..\\..\\Datas\\7_Segment.ttf");
-            //pfc.AddFontFile("D:\\geoff\\Documents\\OneDrive - he2b.be\\Ecole 2019 - 2020\\Q2\\Labo_Traitement_Info\\Projet\\MULTIPLAYER_TETRIS\\Tetris_ClientApp\\Tetris_ClientApp\\Datas\\7_Segment.ttf");
             Font labelTetrisFont = new Font(pfc.Families[0], 26, FontStyle.Bold);
             lblScoreMe.Font = labelTetrisFont;
             lblScoreRival.Font = labelTetrisFont;
             lblRival.Font = labelTetrisFont;
             lblYOU.Font = labelTetrisFont;
-
-            gridPlayerMe = new TetrisGrid(300, 600, 20, 10);
-            gridPlayerRival = new TetrisGrid(300, 600, 20, 10);
-
-            gridPlayerMe.Location = new Point(100, this.Height - gridPlayerMe.Height - 100);
-            gridPlayerRival.Location = new Point(600, this.Height - gridPlayerRival.Height - 100);
-
-            this.Controls.Add(gridPlayerMe);
-            this.Controls.Add(gridPlayerRival);
 
         }
 
@@ -82,14 +71,14 @@ namespace Tetris_ClientApp
                 PrintHandler p = new PrintHandler(printScore);
 
                 String strScore = "";
-                if ((TetrisGrid)sender == gridPlayerMe)
+                if ((TetrisGrid)sender == tetrisGrid2)
                 {
-                    strScore = "score " + gridPlayerMe.score.ToString();
+                    strScore = "score " + tetrisGrid2.score.ToString();
                     this.Invoke(p, lblScoreMe, strScore);
                 }
-                else if ((TetrisGrid)sender == gridPlayerRival)
+                else if ((TetrisGrid)sender == tetrisGridd)
                 {
-                    strScore = "score " + gridPlayerRival.score.ToString();
+                    strScore = "score " + tetrisGridd.score.ToString();
                     this.Invoke(p, lblScoreRival, strScore);
                 }
             }
@@ -101,23 +90,23 @@ namespace Tetris_ClientApp
             Console.WriteLine("GameOver");
             remoteServer.Send("gameOver");
 
-            gridPlayerMe.asyncstopGrid();
+            tetrisGrid2.asyncstopGrid();
             String strMessage = "";
             String strCaption = "GAME OVER";
-            if (gridPlayerMe.score > gridPlayerRival.score)
+            if (tetrisGrid2.score > tetrisGridd.score)
             {
                 strMessage = "YOU WIN \n";
             }
-            else if (gridPlayerMe.score == gridPlayerRival.score)
+            else if (tetrisGrid2.score == tetrisGridd.score)
             {
                 strMessage = "YOU LOSE \n";
             }
             else
             {
-                strMessage = "YOU LOSE \n" + gridPlayerMe.score.ToString() + " point(s)";
+                strMessage = "YOU LOSE \n" + tetrisGrid2.score.ToString() + " point(s)";
             }
-            strMessage += "YOU : " + gridPlayerMe.score.ToString() + " point(s)\n ";
-            strMessage += "RIVAL : " + gridPlayerRival.score.ToString() + " point(s)";
+            strMessage += "YOU : " + tetrisGrid2.score.ToString() + " point(s)\n ";
+            strMessage += "RIVAL : " + tetrisGridd.score.ToString() + " point(s)";
             var result = MessageBox.Show(strMessage, strCaption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
         }
@@ -132,7 +121,7 @@ namespace Tetris_ClientApp
             if (remoteServer != null)
                 if (remoteServer.ClientSocket.Connected)
                 {
-                    TetrisClientInfo info = new TetrisClientInfo(gridPlayerMe);
+                    TetrisClientInfo info = new TetrisClientInfo(tetrisGrid2);
                     remoteServer.Send(info);
                 }
         }
@@ -142,24 +131,36 @@ namespace Tetris_ClientApp
             remoteServer.ready = true;
             remoteServer.Send("ready");
         }
-
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (remoteServer.ClientSocket.Connected == true)
+            {
+                if (textBox1.Text != "")
+                {
+                    ChatMessage msg = new ChatMessage(textBox1.Text);
+                    txtBoxChat.Text += "You: " + textBox1.Text + "\r\n";
+                    textBox1.Text = "";
+                    remoteServer.Send(msg);
+                }
+            }
+        }
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (keyData == Keys.Down)
             {
-                gridPlayerMe.drop();
+                tetrisGrid2.drop();
             }
             if (keyData == Keys.Up)
             {
-                gridPlayerMe.rotate();
+                tetrisGrid2.rotate();
             }
             if (keyData == Keys.Left)
             {
-                gridPlayerMe.moveLeft();
+                tetrisGrid2.moveLeft();
             }
             if (keyData == Keys.Right)
             {
-                gridPlayerMe.moveRight();
+                tetrisGrid2.moveRight();
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
@@ -186,50 +187,66 @@ namespace Tetris_ClientApp
                     this.Invoke(p);
                 }
             }
+            else if(data is ChatMessage)
+            {
+                Console.WriteLine("pddddrinting");
+                if (((ChatMessage)data).strMessage != "")
+                {
+                    String strMessage = ((ChatMessage)data).strMessage;
+                    PrintMessageHandler p = new PrintMessageHandler(printMessageChat);
+                    this.Invoke(p, txtBoxChat, strMessage);
+                }
+            }
             else
             {
                 TetrisClientInfo info = (TetrisClientInfo)data;
-                int rows = gridPlayerRival.numLines;
-                int cols = gridPlayerRival.numCols;
+                int rows = tetrisGridd.numLines;
+                int cols = tetrisGridd.numCols;
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = 0; j < cols; j++)
                     {
-                        gridPlayerRival.labelsBlock[i, j].BackColor = info.tbColors[i,j];
+                        tetrisGridd.labelsBlock[i, j].BackColor = info.tbColors[i,j];
                     }
                 }
-                gridPlayerRival.score = info.score;
-                onScoreChanged(gridPlayerRival, EventArgs.Empty);
+                tetrisGridd.score = info.score;
+                onScoreChanged(tetrisGridd, EventArgs.Empty);
             }
+        }
+
+        private void printMessageChat(TextBox txtbox, string msgToPrint)
+        {
+            Console.WriteLine("printing");
+            txtbox.Text += "Rival: " + msgToPrint +"\r\n";
         }
 
         /**Appelé quand l'adversaire a perdu*/
         private void StopTimerGridMe()
         {
-            gridPlayerMe.asyncstopGrid();
+            tetrisGrid2.asyncstopGrid();
             String strMessage = "";
             String strCaption = "RIVAL GAME OVER";
-            if (gridPlayerMe.score > gridPlayerRival.score)
+            if (tetrisGrid2.score > tetrisGridd.score)
             {
                 strMessage = "YOU WIN \n";
             }
-            else if (gridPlayerMe.score == gridPlayerRival.score)
+            else if (tetrisGrid2.score == tetrisGridd.score)
             {
                 strMessage = "YOU WIN \n";
             }
             else
             {
-                strMessage = "YOU LOSE \n" + gridPlayerMe.score.ToString() + " point(s)";
+                strMessage = "YOU LOSE \n" + tetrisGrid2.score.ToString() + " point(s)";
             }
-            strMessage += "YOU : " + gridPlayerMe.score.ToString() + " point(s)\n ";
-            strMessage += "RIVAL : " + gridPlayerRival.score.ToString() + " point(s)";
+            strMessage += "YOU : " + tetrisGrid2.score.ToString() + " point(s)\n ";
+            strMessage += "RIVAL : " + tetrisGridd.score.ToString() + " point(s)";
             var result = MessageBox.Show(strMessage, strCaption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation );
 
         }
 
         private void startTimerGridMe()
         {
-            gridPlayerMe.start();
+            tetrisGrid2.start();
         }
 
         private void RemoteServer_ClientConnected(Client client)
@@ -238,13 +255,7 @@ namespace Tetris_ClientApp
         private void RemoteServer_ClientDisconnected(Client client, string message)
         {
             MessageBox.Show("You have been disconnected ! Window will now close.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
             this.Close();
-        }
-
-        private void lblScoreMe_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
