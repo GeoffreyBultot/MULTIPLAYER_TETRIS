@@ -17,7 +17,7 @@ namespace Tetris_ClientApp
 
         public TetrisClientInfo(TetrisGrid tg)
         {
-            int size = tg.labelsBlock.Length;
+            int size = tg.pictBox_Case.Length;
             int rows = tg.numLines;
             int cols = tg.numCols;
             this.tbColors = new Color[rows,cols];
@@ -26,7 +26,7 @@ namespace Tetris_ClientApp
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    this.tbColors[i, j] = (tg.labelsBlock[i, j].BackColor);
+                    this.tbColors[i, j] = (tg.pictBox_Case[i, j].BackColor);
                 }//this.BackColor = s.BackColor;
 
             }

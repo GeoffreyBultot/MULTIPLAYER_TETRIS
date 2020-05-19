@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(formTetrisClientApp));
             this.lblRival = new System.Windows.Forms.Label();
-            this.btnAbandonner = new System.Windows.Forms.Button();
+            this.btnReady = new System.Windows.Forms.Button();
             this.lblYOU = new System.Windows.Forms.Label();
             this.lblScoreMe = new System.Windows.Forms.Label();
             this.lblScoreRival = new System.Windows.Forms.Label();
@@ -38,6 +38,7 @@
             this.btnSend = new System.Windows.Forms.Button();
             this.txtBoxChat = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.secondPieceGrid = new Tetris_ClientApp.TetrisSecondPieceGrid();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,19 +54,19 @@
             this.lblRival.TabIndex = 1;
             this.lblRival.Text = "RIVAL";
             // 
-            // btnAbandonner
+            // btnReady
             // 
-            this.btnAbandonner.BackColor = System.Drawing.Color.IndianRed;
-            this.btnAbandonner.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnAbandonner.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnAbandonner.Font = new System.Drawing.Font("Nirmala UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAbandonner.Location = new System.Drawing.Point(968, 34);
-            this.btnAbandonner.Name = "btnAbandonner";
-            this.btnAbandonner.Size = new System.Drawing.Size(90, 52);
-            this.btnAbandonner.TabIndex = 2;
-            this.btnAbandonner.Text = "READY";
-            this.btnAbandonner.UseVisualStyleBackColor = false;
-            this.btnAbandonner.Click += new System.EventHandler(this.btnAbandonner_Click);
+            this.btnReady.BackColor = System.Drawing.Color.IndianRed;
+            this.btnReady.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnReady.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnReady.Font = new System.Drawing.Font("Arial Rounded MT Bold", 12F);
+            this.btnReady.Location = new System.Drawing.Point(968, 34);
+            this.btnReady.Name = "btnReady";
+            this.btnReady.Size = new System.Drawing.Size(90, 52);
+            this.btnReady.TabIndex = 2;
+            this.btnReady.Text = "READY";
+            this.btnReady.UseVisualStyleBackColor = false;
+            this.btnReady.Click += new System.EventHandler(this.btnAbandonner_Click);
             // 
             // lblYOU
             // 
@@ -145,6 +146,13 @@
             this.textBox1.Size = new System.Drawing.Size(181, 65);
             this.textBox1.TabIndex = 206;
             // 
+            // secondPieceGrid
+            // 
+            this.secondPieceGrid.Location = new System.Drawing.Point(38, 12);
+            this.secondPieceGrid.Name = "secondPieceGrid";
+            this.secondPieceGrid.Size = new System.Drawing.Size(80, 80);
+            this.secondPieceGrid.TabIndex = 207;
+            // 
             // formTetrisClientApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -153,6 +161,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1088, 707);
+            this.Controls.Add(this.secondPieceGrid);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.txtBoxChat);
             this.Controls.Add(this.btnSend);
@@ -160,7 +169,7 @@
             this.Controls.Add(this.lblScoreRival);
             this.Controls.Add(this.lblScoreMe);
             this.Controls.Add(this.lblYOU);
-            this.Controls.Add(this.btnAbandonner);
+            this.Controls.Add(this.btnReady);
             this.Controls.Add(this.lblRival);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "formTetrisClientApp";
@@ -175,7 +184,7 @@
 
         #endregion
         private System.Windows.Forms.Label lblRival;
-        private System.Windows.Forms.Button btnAbandonner;
+        private System.Windows.Forms.Button btnReady;
         private System.Windows.Forms.Label lblYOU;
         private System.Windows.Forms.Label lblScoreMe;
         private System.Windows.Forms.Label lblScoreRival;
@@ -183,6 +192,7 @@
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.TextBox txtBoxChat;
         private System.Windows.Forms.TextBox textBox1;
+        private TetrisSecondPieceGrid secondPieceGrid;
     }
 }
 

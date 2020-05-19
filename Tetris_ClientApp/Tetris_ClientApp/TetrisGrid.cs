@@ -17,13 +17,10 @@ namespace Tetris_ClientApp
         public int numCols = 10;
 
         int lines = 0;
-        int x2 = 0;
-        int x3 = 0;
-        int x4 = 0;
 
         public int score { get; set; }
 
-        public Label[,] labelsBlock { get; set; }
+        public PictureBox[,] pictBox_Case { get; set; }
         
         private int px;
         private int py;
@@ -39,7 +36,11 @@ namespace Tetris_ClientApp
         public event EventHandler ScoreChanged;
         public event EventHandler GameOver;
 
-        delegate void TimerHandler();
+        public delegate void HandlerFigureSet(Figure fg);
+
+        public event HandlerFigureSet FigureSet;
+
+
         public TetrisGrid()
         {
             this.Height = 600;
@@ -113,15 +114,12 @@ namespace Tetris_ClientApp
 
         private bool moveDown()
         {
-            //int sz = (int)Math.Sqrt(figure.figure.Length);
             int sz = figure.size;
             erasefigure(figure, px, py);
             if (check(figure, px, py + 1))
             {
                 py++;
-                //Console.WriteLine("draw by movedown");
                 drawfigure(figure, px, py);
-                //Console.WriteLine(px.ToString() + ";" + py.ToString());
                 if (FigureMovedDown != null)
                     FigureMovedDown(this, EventArgs.Empty);
                 return true;
@@ -138,7 +136,7 @@ namespace Tetris_ClientApp
                 bool full = true;
                 for (int i = 0; i < numCols; i++)
                 {
-                    if (labelsBlock[j, i].BackColor == Color.Black) full = false;
+                    if (pictBox_Case[j, i].BackColor == Color.Black) full = false;
                 }
                 if (full)
                 {
@@ -146,7 +144,7 @@ namespace Tetris_ClientApp
                     count++;
                     for (int k = j; k > 0; k--)
                         for (int i = 0; i < 10; i++)
-                            labelsBlock[k, i].BackColor = labelsBlock[k - 1, i].BackColor;
+                            pictBox_Case[k, i].BackColor = pictBox_Case[k - 1, i].BackColor;
                 }
                 full = true;
 
@@ -170,13 +168,14 @@ namespace Tetris_ClientApp
             nf = new Figure();
             py = -1;
             px = 4;
-            //_timer.Interval = (int)(200 / (level * 0.7));
-            TimerHandler tri = new TimerHandler(timerUpdateInterval);
-        }
 
-        private void timerUpdateInterval()
-        {
             _timer.Interval = (int)(200 / (level * 0.7));
+            if(FigureSet != null)
+            {
+                FigureSet(nf);
+                //FigureSet(this, EventArgs.Empty, nf);
+            }
+
         }
 
         public void drop()
@@ -257,7 +256,7 @@ namespace Tetris_ClientApp
                     int ry = i + y;
                     if ( (!(ry < 0 || ry >= numLines || rx < 0 || rx >= numCols)) && fg.figure[i, j] != 0)
                     {
-                        labelsBlock[i + y, j + x].BackColor = fg.colorFigure;//figure[i, j];
+                        pictBox_Case[i + y, j + x].BackColor = fg.colorFigure;//figure[i, j];
                     }
                 }
             }
@@ -276,7 +275,7 @@ namespace Tetris_ClientApp
                     //Console.WriteLine(rx.ToString(),ry.ToString());
                     if ((!(ry < 0 || ry >= numLines || rx < 0 || rx >= numCols)) && fg.figure[i, j] != 0)
                     {
-                        labelsBlock[i + y, j + x].BackColor = Color.Black;
+                        pictBox_Case[i + y, j + x].BackColor = Color.Black;
                     }
                 }
             }
@@ -297,7 +296,7 @@ namespace Tetris_ClientApp
                     {
                         if (fg.figure[i, j] != 0)
                         {
-                            if (labelsBlock[ry, rx].BackColor != Color.Black)
+                            if (pictBox_Case[ry, rx].BackColor != Color.Black)
                                 return false;
                         }
                     }
@@ -307,29 +306,27 @@ namespace Tetris_ClientApp
 
         private void drawGrid(int rows, int cols)
         {
-            //LabelsCreation
             float interval = (float)(this.Width) / (float)(cols);
             float sizeSquare = interval * 0.9f;
-
             int i,j;
             
-            labelsBlock = new Label[rows,cols];
+            pictBox_Case = new PictureBox[rows,cols];
             int sizeAddToCenter = (int)((interval-sizeSquare)/2);
 
             for (i = 0; i< rows; i++)
             {
                 for (j = 0; j < cols; j++) 
                 {
-                    labelsBlock[i, j] = new Label();
-                    labelsBlock[i, j].BackColor = Color.Black;
-                    labelsBlock[i, j].Location = new Point(sizeAddToCenter + (int)interval * j, +sizeAddToCenter + (int)interval * i);
-                    labelsBlock[i, j].Name = "blockLabel" + i.ToString() + j.ToString();
-                    labelsBlock[i, j].Size = new Size((int)sizeSquare, (int)sizeSquare);
-                    //labelsBlock[i, j].TabIndex =;
-                    this.Controls.Add(labelsBlock[i, j]);
+                    pictBox_Case[i, j] = new PictureBox();
+                    pictBox_Case[i, j].BackColor = Color.Black;
+                    pictBox_Case[i, j].Location = new Point(sizeAddToCenter + (int)interval * j, +sizeAddToCenter + (int)interval * i);
+                    pictBox_Case[i, j].Name = "blockLabel" + i.ToString() + j.ToString();
+                    pictBox_Case[i, j].Size = new Size((int)sizeSquare, (int)sizeSquare);
+                    //pictBox_Case[i, j].TabIndex =;
+                    this.Controls.Add(pictBox_Case[i, j]);
                 }
-                
             }
+            Form parentForm = (this.Parent as Form);
         }
 
         private void resetGrid()
@@ -338,12 +335,11 @@ namespace Tetris_ClientApp
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    labelsBlock[i,j].BackColor = Color.Black;
+                    pictBox_Case[i,j].BackColor = Color.Black;
                 }
             }
             score = 0;
-            level = 0;
-
+            level = 1;
         }
     }
 }

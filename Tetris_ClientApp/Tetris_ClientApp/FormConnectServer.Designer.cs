@@ -43,32 +43,40 @@
             // lblCodeReceived
             // 
             this.lblCodeReceived.AutoSize = true;
+            this.lblCodeReceived.Font = new System.Drawing.Font("Arial Rounded MT Bold", 12F);
             this.lblCodeReceived.Location = new System.Drawing.Point(134, 82);
             this.lblCodeReceived.Name = "lblCodeReceived";
-            this.lblCodeReceived.Size = new System.Drawing.Size(41, 13);
+            this.lblCodeReceived.Size = new System.Drawing.Size(63, 18);
             this.lblCodeReceived.TabIndex = 0;
             this.lblCodeReceived.Text = "Code : ";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(68, 123);
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Font = new System.Drawing.Font("Arial Rounded MT Bold", 12F);
+            this.label2.ForeColor = System.Drawing.Color.Cornsilk;
+            this.label2.Location = new System.Drawing.Point(31, 119);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(59, 13);
+            this.label2.Size = new System.Drawing.Size(96, 18);
             this.label2.TabIndex = 1;
             this.label2.Text = "Enter code";
             // 
             // lblServerIP
             // 
             this.lblServerIP.AutoSize = true;
-            this.lblServerIP.Location = new System.Drawing.Point(71, 37);
+            this.lblServerIP.BackColor = System.Drawing.Color.Transparent;
+            this.lblServerIP.Font = new System.Drawing.Font("Arial Rounded MT Bold", 12F);
+            this.lblServerIP.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.lblServerIP.Location = new System.Drawing.Point(37, 34);
             this.lblServerIP.Name = "lblServerIP";
-            this.lblServerIP.Size = new System.Drawing.Size(57, 13);
+            this.lblServerIP.Size = new System.Drawing.Size(91, 18);
             this.lblServerIP.TabIndex = 2;
             this.lblServerIP.Text = "Server IP :";
             // 
             // txtBoxCode
             // 
+            this.txtBoxCode.Font = new System.Drawing.Font("Arial Rounded MT Bold", 8F);
             this.txtBoxCode.Location = new System.Drawing.Point(133, 120);
             this.txtBoxCode.Name = "txtBoxCode";
             this.txtBoxCode.Size = new System.Drawing.Size(100, 20);
@@ -76,6 +84,7 @@
             // 
             // txtBoxServerIP
             // 
+            this.txtBoxServerIP.Font = new System.Drawing.Font("Arial Rounded MT Bold", 8F);
             this.txtBoxServerIP.Location = new System.Drawing.Point(133, 34);
             this.txtBoxServerIP.Name = "txtBoxServerIP";
             this.txtBoxServerIP.Size = new System.Drawing.Size(100, 20);
@@ -83,6 +92,7 @@
             // 
             // btnGetCode
             // 
+            this.btnGetCode.Font = new System.Drawing.Font("Arial Rounded MT Bold", 8F);
             this.btnGetCode.Location = new System.Drawing.Point(53, 77);
             this.btnGetCode.Name = "btnGetCode";
             this.btnGetCode.Size = new System.Drawing.Size(75, 23);
@@ -93,9 +103,10 @@
             // 
             // btnGoGame
             // 
+            this.btnGoGame.Font = new System.Drawing.Font("Arial Rounded MT Bold", 8F);
             this.btnGoGame.Location = new System.Drawing.Point(136, 148);
             this.btnGoGame.Name = "btnGoGame";
-            this.btnGoGame.Size = new System.Drawing.Size(75, 23);
+            this.btnGoGame.Size = new System.Drawing.Size(97, 23);
             this.btnGoGame.TabIndex = 7;
             this.btnGoGame.Text = "Go to game";
             this.btnGoGame.UseVisualStyleBackColor = true;
@@ -103,7 +114,8 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(217, 148);
+            this.btnCancel.Font = new System.Drawing.Font("Arial Rounded MT Bold", 8F);
+            this.btnCancel.Location = new System.Drawing.Point(234, 148);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 8;
@@ -113,6 +125,7 @@
             // 
             // btnConnect
             // 
+            this.btnConnect.Font = new System.Drawing.Font("Arial Rounded MT Bold", 8F);
             this.btnConnect.Location = new System.Drawing.Point(239, 31);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(75, 23);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Tetris_ClientApp
 {
-    class Figure
+    public class Figure
     {
         public int[,] figure;
         public Color colorFigure;
