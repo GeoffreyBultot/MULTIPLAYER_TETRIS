@@ -52,7 +52,7 @@ namespace Tetris_ClientApp
             }
         }
 
-
+        #region GRAPHICS
         void InitGraphics()
         {
             gridPlayerMe = new TetrisGrid(300, 600, 20, 10);
@@ -92,6 +92,8 @@ namespace Tetris_ClientApp
 
             this.Width = txtBoxChat.Location.X + txtBoxChat.Width + 50;
         }
+        #endregion
+
 
         private void onScoreChanged(object sender, EventArgs e)
         {
@@ -277,6 +279,9 @@ namespace Tetris_ClientApp
         private void startTimerGridMe()
         {
             gridPlayerMe.start();
+            PrintHandler p = new PrintHandler(printScore);
+            lblScoreMe.Text = "score " + gridPlayerMe.score.ToString();
+            lblScoreRival.Text = "score " + gridPlayerRival.score.ToString();
         }
 
         private void RemoteServer_ClientConnected(Client client)

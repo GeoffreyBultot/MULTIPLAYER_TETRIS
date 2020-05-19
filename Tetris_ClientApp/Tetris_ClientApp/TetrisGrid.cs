@@ -44,14 +44,13 @@ namespace Tetris_ClientApp
             this.Height = 600;
             this.Width = 300;
             this.BackColor = Color.DarkGray;
-            this.numLines = 20;
-            this.numCols = 10;
+
             drawGrid(numLines, numCols);
 
             setfigure();
 
             _timer = new Timer();
-            _timer.Interval = (int)(100 / (level * 0.7));
+            _timer.Interval = (int)(200 / (level * 0.7));
             _timer.Tick += new EventHandler(TimerTick);
         }
 
@@ -67,7 +66,7 @@ namespace Tetris_ClientApp
             setfigure();
 
             _timer = new Timer();
-            _timer.Interval = (int)(300 / (level * 0.7));
+            _timer.Interval = (int)(200 / (level * 0.7));
             _timer.Tick += new EventHandler(TimerTick);
         }
 
@@ -92,7 +91,6 @@ namespace Tetris_ClientApp
             game = true;
             setfigure();
             resetGrid();
-            //_timer.Interval = (int)(100 / (level * 0.7));
             _timer.Start();
         }
 
@@ -171,6 +169,7 @@ namespace Tetris_ClientApp
             nf = new Figure();
             py = -1;
             px = 4;
+            _timer.Interval = (int)(200 / (level * 0.7));
         }
         
         public void drop()
@@ -335,6 +334,9 @@ namespace Tetris_ClientApp
                     labelsBlock[i,j].BackColor = Color.Black;
                 }
             }
+            score = 0;
+            level = 0;
+
         }
     }
 }
