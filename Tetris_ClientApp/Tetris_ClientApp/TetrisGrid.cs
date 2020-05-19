@@ -39,6 +39,7 @@ namespace Tetris_ClientApp
         public event EventHandler ScoreChanged;
         public event EventHandler GameOver;
 
+        delegate void TimerHandler();
         public TetrisGrid()
         {
             this.Height = 600;
@@ -169,9 +170,15 @@ namespace Tetris_ClientApp
             nf = new Figure();
             py = -1;
             px = 4;
+            //_timer.Interval = (int)(200 / (level * 0.7));
+            TimerHandler tri = new TimerHandler(timerUpdateInterval);
+        }
+
+        private void timerUpdateInterval()
+        {
             _timer.Interval = (int)(200 / (level * 0.7));
         }
-        
+
         public void drop()
         {
             if (game)

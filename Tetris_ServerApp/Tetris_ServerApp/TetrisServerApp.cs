@@ -156,7 +156,7 @@ namespace Tetris_ServerApp
             labelServerStatus.Text = "Server listening on : " + server.listenSocket.LocalEndPoint;
         }
 
-        private void AroundTheWorldServer_FormClosing(object sender, FormClosingEventArgs e)
+        private void TetrisServerApp_FormClosing(object sender, FormClosingEventArgs e)
         {
             /* Pour les explications voir la fonction AroundTheWorldClient_FormClosing de la classe AroundTheWorldClient 
              */
@@ -169,9 +169,5 @@ namespace Tetris_ServerApp
             server.Stop();
         }
 
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

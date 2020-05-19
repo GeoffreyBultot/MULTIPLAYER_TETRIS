@@ -91,7 +91,6 @@
             this.label2.Size = new System.Drawing.Size(173, 22);
             this.label2.TabIndex = 12;
             this.label2.Text = "CLIENT LIST";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // monitorServerMessages
             // 
@@ -148,6 +147,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "TetrisServerApp";
             this.Text = "Tetris Server";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.TetrisServerApp_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
