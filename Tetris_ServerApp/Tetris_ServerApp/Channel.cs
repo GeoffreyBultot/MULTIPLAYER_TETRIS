@@ -74,6 +74,15 @@ namespace Tetris_ServerApp
         public void removeClient(Client player)
         {
             remoteClients.Remove(player);
+            if (inGame)
+            {
+                for (int i = 0; i < remoteClients.Count; i++)
+                {
+                    remoteClients[i].Send("gameOver");
+                    remoteClients[i].ready = false;
+                }
+                this.inGame = false;
+            }
         }
 
         #region Raising event methods
@@ -83,15 +92,7 @@ namespace Tetris_ServerApp
             if (data is String)
             {
                 Console.WriteLine(data);
-                if ((String)data == "giveMeCode")
-                {
-                    int chanel;
-                    Random random = new Random();
-                    chanel = random.Next(1, 9999);
-
-                    remoteClients[remoteClients.IndexOf(client)].Send(chanel.ToString());
-                }
-                else if ((String)data == "ready")
+                if ((String)data == "ready")
                 {
                     remoteClients[remoteClients.IndexOf(client)].ready = true;
                     foreach (Client cl in this.remoteClients)
@@ -112,8 +113,6 @@ namespace Tetris_ServerApp
                     {
                         cl.ready = false;
                     }
-                    
-
                 }
             }
             else if (data is byte[])

@@ -82,9 +82,20 @@ namespace Tetris_ServerApp
                 if ((String)data == "giveMeCode")
                 {
                     int chanel;
+                    bool isValid = false;
                     Random random = new Random();
                     chanel = random.Next(1, 9999);
-                        
+                    while(isValid == false)
+                    {
+                        isValid = true;
+                        for (int i = 0; i < PlayingChannels.Count; i++)
+                        {
+                            if (chanel == PlayingChannels[i].code)
+                            {
+                                isValid = false;
+                            }
+                        }
+                    }
                     remoteClients[remoteClients.IndexOf(client)].Send(chanel.ToString());
                 }
                 

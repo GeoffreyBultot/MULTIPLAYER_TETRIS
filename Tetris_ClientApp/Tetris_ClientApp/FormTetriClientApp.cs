@@ -41,7 +41,7 @@ namespace Tetris_ClientApp
 
                 byte[] codeChannel = Encoding.ASCII.GetBytes(serverConnection.stCode);
                 remoteServer.Send(codeChannel);
-                
+                txtBoxChat.Text += "Welcome in the channel " + serverConnection.stCode.ToString();
                 gridPlayerMe.FigureMovedDown += onFigureMovedDown;
                 gridPlayerMe.ScoreChanged += onScoreChanged;
                 gridPlayerMe.GameOver += onGameOver;
