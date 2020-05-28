@@ -66,7 +66,7 @@
             this.btnReady.TabIndex = 2;
             this.btnReady.Text = "READY";
             this.btnReady.UseVisualStyleBackColor = false;
-            this.btnReady.Click += new System.EventHandler(this.btnAbandonner_Click);
+            this.btnReady.Click += new System.EventHandler(this.btnReady_Click);
             // 
             // lblYOU
             // 
@@ -125,7 +125,7 @@
             this.btnSend.TabIndex = 204;
             this.btnSend.Text = "SEND";
             this.btnSend.UseVisualStyleBackColor = true;
-            this.btnSend.Click += new System.EventHandler(this.button1_Click);
+            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
             // txtBoxChat
             // 
@@ -148,6 +148,7 @@
             // 
             // secondPieceGrid
             // 
+            this.secondPieceGrid.BackColor = System.Drawing.Color.Transparent;
             this.secondPieceGrid.Location = new System.Drawing.Point(38, 12);
             this.secondPieceGrid.Name = "secondPieceGrid";
             this.secondPieceGrid.Size = new System.Drawing.Size(80, 80);

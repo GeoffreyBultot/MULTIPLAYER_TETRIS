@@ -11,7 +11,12 @@ using System.Net;
 using System.Net.Sockets;
 namespace Tetris_ServerApp
 {
-    //remoteClients
+    /*
+     * Le serveur est démarré par n'importe quel client, voire même par une personne externe. La méthode de fonctionnement était à l'origine faite pour fonctionner avec un serveur distant
+     * à une IP fixe mais cela ne s'est pas fait pour des raisons de facilité de correction de l'application.
+     * Le client demande au serveur un code, le serveur lui envoie. Quand le client se connecte à un channel de jeux avec un code, le serveur crée ce channel si il n'existe pas
+     * Si le channel existe déjà et qu'il n'est pas complet, on ajoute le client au channel et les informations passent alors de client en client au travers de la classe channel.
+     * **/
     public partial class TetrisServerApp : Form
     {
         IPHostEntry localIP = Dns.Resolve(Dns.GetHostName());
@@ -28,6 +33,7 @@ namespace Tetris_ServerApp
 
         private void button1_Click(object sender, EventArgs e)
         {
+            //Bouton qui allume ou éteint le serveur
             if(server == null)
             {
                 server = new Server(txtBoxIP.Text, 2600);
@@ -48,6 +54,7 @@ namespace Tetris_ServerApp
                 server.Start();
             }
         }
+
         private void Server_ClientAccepted(Client client)
         {
             Client remoteClient = client;
@@ -79,12 +86,14 @@ namespace Tetris_ServerApp
             if (data is String)
             {
                 Console.WriteLine(data);
+                //Envoyer un code d'accès à un channel
                 if ((String)data == "giveMeCode")
                 {
                     int chanel;
                     bool isValid = false;
                     Random random = new Random();
                     chanel = random.Next(1, 9999);
+                    //Envoyer le code d'un channel qui n'est pas encore créé
                     while(isValid == false)
                     {
                         isValid = true;
@@ -99,27 +108,34 @@ namespace Tetris_ServerApp
                     remoteClients[remoteClients.IndexOf(client)].Send(chanel.ToString());
                 }
                 
-            }
+            }//Si tableau de byte, c'est un numéro de channel
             else if (data is byte[])
             {
                 String stCode = Encoding.ASCII.GetString((byte[])data);
-                
+                //Récupère le channel
                 for (int i = 0; i < PlayingChannels.Count; i++)
                 {
+                    //Si le code lu correspont à un channel ?
                     if (PlayingChannels[i].code == Int32.Parse(stCode))
                     {
-                        
+                        //Si oui, on ajoute le joueur dans le channel existant
                         if (PlayingChannels[i].AddPlayer(remoteClients[remoteClients.IndexOf(client)]))
                         {
+                            //On retire la callback de remoteclient qui est appelée quand on recoit une info parce qu'on va l'ajouter dans la classe channel,
+                            //pour gérer les infos seulement entre les deux joueurs
                             remoteClients[remoteClients.IndexOf(client)].DataReceived -= RemoteClient_DataReceived;
                             monitorServerMessages.AddMessage(client.ClientSocket.RemoteEndPoint + " join the channel " + stCode );
                         }
                         return;
                     }
                 }
+                //Si on arrive ici, c'est qu'on est passé par le return et donc on a pas trouvé de channel existant correspondant au code envoyé par le client
+                //On crée donc le channel voulu et on y ajoute le client voulu. Ensuite, on ajoute le channel créé à la liste de channels 
                 Channel chan = new Channel(Int32.Parse(stCode));
                 chan.AddPlayer(client);
                 PlayingChannels.Add(chan);
+                //Console management
+                monitorServerMessages.AddMessage("Channel " + stCode + "create");
                 monitorServerMessages.AddMessage(client.ClientSocket.RemoteEndPoint + " join the channel " + stCode);
             }
             else

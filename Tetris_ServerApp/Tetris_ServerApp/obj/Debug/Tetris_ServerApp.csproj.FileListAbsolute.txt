@@ -11,3 +11,16 @@ D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\Labo_Traitement_Info\
 D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\bin\Debug\Tetris_ClientApp.exe.config
 D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\obj\Debug\Tetris_ServerApp.csproj.CopyComplete
 D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\bin\Debug\Tetris_ClientApp.exe
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\bin\Debug\Tetris_ServerApp.exe.config
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\bin\Debug\Tetris_ServerApp.exe
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\bin\Debug\Tetris_ServerApp.pdb
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\bin\Debug\Tetris_ClientApp.exe
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\bin\Debug\Tetris_ClientApp.pdb
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\bin\Debug\Tetris_ClientApp.exe.config
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\obj\Debug\Tetris_ServerApp.csprojAssemblyReference.cache
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\obj\Debug\Tetris_ServerApp.TetrisServerApp.resources
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\obj\Debug\Tetris_ServerApp.Properties.Resources.resources
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\obj\Debug\Tetris_ServerApp.csproj.GenerateResource.cache
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\obj\Debug\Tetris_ServerApp.csproj.CopyComplete
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\obj\Debug\Tetris_ServerApp.exe
+D:\geoff\Documents\OneDrive - he2b.be\Ecole 2019 - 2020\Q2\OK_Labo_Traitement_Info\Projet\MULTIPLAYER_TETRIS\Tetris_ServerApp\Tetris_ServerApp\obj\Debug\Tetris_ServerApp.pdb

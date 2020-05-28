@@ -11,6 +11,12 @@ using System.Windows.Forms;
 
 namespace Tetris_ClientApp
 {
+    /**
+     * Quand le client ouvre l'application, on démarre cette fenêtre et avant de l'afficher, on uvre une autre (dialog) pour qu'il puisse se connecter au serveur (voir FormConnectServer.cs). 
+     * Il est à noter que le TetrisGrid hérite de la classe panel, ce qui permet de le placer directement dans le designer. Cependant, comme il contient un tableau à deux dimensions, 
+     * Visual Studio génère des erreurs en disant qu'il ne peut gérer des tableaux que 'une seule dimension.
+     * J'ajoute donc le tetrisGrid
+     */
     public partial class formTetrisClientApp : Form
     {
         Client remoteServer;
@@ -29,41 +35,53 @@ namespace Tetris_ClientApp
 
             FormConnectServer serverConnection = new FormConnectServer();
 
-            InitGraphics();
+            //Création des tetrisgrid
+            gridPlayerMe = new TetrisGrid(300, 600, 20, 10);
+            gridPlayerRival = new TetrisGrid(300, 600, 20, 10);
+            //this.btnReady.KeyDown += new System.Windows.Forms.
+            resizeGraphics();
+
+
             serverConnection.ShowDialog();
+            //Si le client clique sur OK
             if (serverConnection.DialogResult == DialogResult.OK)
             {
+                //Le client remoteServer est tout d'abord créé dans la fenêtre FormConnectServer. On le passe à cette classe pour qu'il puisse être exploité ici.
                 remoteServer = serverConnection.remoteServer;
-                remoteServer.ClientConnected += RemoteServer_ClientConnected;
+                //Ajout des callback d'événement de communication
                 remoteServer.DataReceived += RemoteServer_DataReceived;
                 remoteServer.ClientDisconnected += RemoteServer_ClientDisconnected;
                 remoteServer.ConnectionRefused += RemoteServer_ConnectionRefused;
-
+                //Récupération du channel (la validité de cette info est gérée dans FormConnectServer)
                 byte[] codeChannel = Encoding.ASCII.GetBytes(serverConnection.stCode);
+                //Envoi du channel au serveur. Si un channel portant le même numéro est existant, le client le rejoindra et dans le cas contraire, le serveur créera le channel et y placera le client
                 remoteServer.Send(codeChannel);
+                //Affiche le numéro du channel pour que le client puisse le donner à la personne avec qui il veut jouer
                 txtBoxChat.Text += "Welcome in the channel " + serverConnection.stCode.ToString();
+                //Callaback quand la figure bouge, on l'utilise pour envoyer les infos de la grid
                 gridPlayerMe.FigureMovedDown += onFigureMovedDown;
+                //Quand le score change dans la classe tetrisgrid, pour l'afficher dans les label
                 gridPlayerMe.ScoreChanged += onScoreChanged;
+                //Callback quand le joueur a perdu
                 gridPlayerMe.GameOver += onGameOver;
+                //Callback quand une nouvelle pièce est générée. Elle permet de changer la pièce dans le pannel contenant la "next piece"
                 gridPlayerMe.FigureSet += onFigureSet;
             }
+            //Si le client annule la connexion
             else //if(serverConnection.DialogResult == DialogResult.Cancel)
             {
+                //Fermeture de l'appli si le client annule la connexion
                 Load += (s, e) => Close();
             }
         }
 
-        private void onFigureSet(Figure fg)
-        {
-            secondPieceGrid.setFigure(fg);
-        }
+        
 
-        #region GRAPHICS
-        void InitGraphics()
+        #region RESIZEGRAPHICS
+        void resizeGraphics()
         {
-            gridPlayerMe = new TetrisGrid(300, 600, 20, 10);
-            gridPlayerRival = new TetrisGrid(300, 600, 20, 10);
-
+            //Comme les tetrisGrid sont ajoutés en ligne de code, je réaligne les autres éléments aux tetrisgrid pour un meilleur rendu esthétique 
+            //taille de la fenêtre dépendant des tetrisgrid
             this.Height = gridPlayerMe.Height + 150;
 
             /** GRIDS LOCATION */
@@ -95,19 +113,20 @@ namespace Tetris_ClientApp
             lblScoreRival.Location = new Point(gridPlayerRival.Location.X + (gridPlayerRival.Width) / 2 - lblScoreRival.Width / 2, gridPlayerRival.Location.Y - lblScoreRival.Height - 5);
             lblRival.Location = new Point(gridPlayerRival.Location.X + (gridPlayerRival.Width) / 2 - lblRival.Width / 2, lblScoreMe.Location.Y - lblRival.Height - 5);
 
-
+            //Longueur de la fenêtre
             this.Width = txtBoxChat.Location.X + txtBoxChat.Width + 50;
         }
         #endregion
 
-
+        #region TETRISGRISCALLBACK
+        //Quand le score change
         private void onScoreChanged(object sender, EventArgs e)
         {
             if (sender is TetrisGrid)
             {
 
                 PrintHandler p = new PrintHandler(printScore);
-
+                //Le sender permet de savoir dans quel label mettre le score
                 String strScore = "";
                 if ((TetrisGrid)sender == gridPlayerMe)
                 {
@@ -125,35 +144,65 @@ namespace Tetris_ClientApp
         /**Appelé quand Me a perdu*/
         private void onGameOver(object sender, EventArgs e)
         {
-            remoteServer.Send("gameOver");
+            if (sender is TetrisGrid)
+            {
 
-            gridPlayerMe.asyncstopGrid();
-            String strMessage = "";
-            String strCaption = "GAME OVER";
-            if (gridPlayerMe.score > gridPlayerRival.score)
-            {
-                strMessage = "YOU WIN \n";
-            }
-            else if (gridPlayerMe.score == gridPlayerRival.score)
-            {
-                strMessage = "YOU LOSE \n";
-            }
-            else
-            {
-                strMessage = "YOU LOSE \n";
-            }
-            strMessage += "YOU : " + gridPlayerMe.score.ToString() + " point(s)\n ";
-            strMessage += "RIVAL : " + gridPlayerRival.score.ToString() + " point(s)";
-            var result = MessageBox.Show(strMessage, strCaption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                remoteServer.Send("gameOver");
 
-            btnReady.Enabled = true;
-            btnReady.Text = "Ready";
+                gridPlayerMe.stopGrid();
+                String strMessage = "";
+                String strCaption = "GAME OVER";
+                if (gridPlayerMe.score > gridPlayerRival.score)
+                {
+                    strMessage = "YOU WIN \n";
+                }
+                else if (gridPlayerMe.score == gridPlayerRival.score)
+                {
+                    strMessage = "YOU LOSE \n";
+                }
+                else
+                {
+                    strMessage = "YOU LOSE \n";
+                }
+                strMessage += "YOU : " + gridPlayerMe.score.ToString() + " point(s)\n ";
+                strMessage += "RIVAL : " + gridPlayerRival.score.ToString() + " point(s)";
+                var result = MessageBox.Show(strMessage, strCaption, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                btnReady.Enabled = true;
+                btnReady.Text = "Ready";
+            }
         }
 
-        /**Appelé quand l'adversaire a perdu*/
+        
+        private void onFigureMovedDown(object sender, EventArgs e)
+        {
+            if (sender is TetrisGrid)
+            {
+                if (remoteServer != null)
+                    if (remoteServer.ClientSocket.Connected)
+                    {
+                        TetrisClientInfo info = new TetrisClientInfo(gridPlayerMe);
+                        remoteServer.Send(info);
+                    }
+            }
+        }
+        //affiche la prochaine figure dans le control TetrisSecondPieceGrid
+        private void onFigureSet(object sender, Figure nextPiece)
+        {
+            if (sender is TetrisGrid)
+            {
+                secondPieceGrid.setFigure(nextPiece);
+            }
+        }
+        #endregion
+
+
+        /**Appelé par INVOKE grâce au RivalGameOverHandler quand l'adversaire a perdu*/
         private void StopGameGridMe()
         {
-            gridPlayerMe.asyncstopGrid();
+            //Permet de stopper la grid
+            gridPlayerMe.stopGrid();
+            //Affiche win ou lose dans une messagebox
             String strMessage = "";
             String strCaption = "RIVAL GAME OVER";
             if (gridPlayerMe.score > gridPlayerRival.score)
@@ -176,27 +225,21 @@ namespace Tetris_ClientApp
             btnReady.Text = "Ready";
         }
 
+        //Appelé par un printhandler pour print le score dans le bon label
         private void printScore(Label label, string msgToPrint)
         {
             label.Text = msgToPrint;
         }
 
-        private void onFigureMovedDown(object sender, EventArgs e)
-        {
-            if (remoteServer != null)
-                if (remoteServer.ClientSocket.Connected)
-                {
-                    TetrisClientInfo info = new TetrisClientInfo(gridPlayerMe);
-                    remoteServer.Send(info);
-                }
-        }
-
-        private void btnAbandonner_Click(object sender, EventArgs e)
+        //Envoie au serveur que le joueur est ready
+        private void btnReady_Click(object sender, EventArgs e)
         {
             remoteServer.ready = true;
             remoteServer.Send("ready");
         }
-        private void button1_Click(object sender, EventArgs e)
+
+        //Envoie de messages dans le chat
+        private void btnSend_Click(object sender, EventArgs e)
         {
             if (remoteServer.ClientSocket.Connected == true)
             {
@@ -209,8 +252,10 @@ namespace Tetris_ClientApp
                 }
             }
         }
+        //gestion des contrôles clavier pour bouger les pièces
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            Console.WriteLine("toto");
             if (keyData == Keys.Down)
             {
                 gridPlayerMe.drop();
@@ -230,14 +275,18 @@ namespace Tetris_ClientApp
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+
+        //Ferme le programme si problème de connexion
         private void RemoteServer_ConnectionRefused(Client client, string message)
         {
             MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             this.Close();
         }
 
+        //Quand on reçoit des données du serveur
         private void RemoteServer_DataReceived(Client client, object data)
         {
+            //Si c'est du texte, à ce niveau, c'est soir le serveur qui dit qu'on peut start la game ou un que l'adversaire a perdu
             if (data is String)
             {
                 if ((String)data == "start")
@@ -251,7 +300,7 @@ namespace Tetris_ClientApp
                     this.Invoke(p);
                 }
             }
-            else if(data is ChatMessage)
+            else if(data is ChatMessage)//Si c'est un chat message, on l'affiche dans le chat
             {
                 if (((ChatMessage)data).strMessage != "")
                 {
@@ -260,7 +309,7 @@ namespace Tetris_ClientApp
                     this.Invoke(p, txtBoxChat, strMessage);
                 }
             }
-            else
+            else if (data is TetrisClientInfo) //Si c'est un client info, on rafraichit la grid de l'adversaire. On utilise un TetriClientInfo parce qu'on ne peut pas sérialiser les données graphiques comme les picrutebox
             {
                 TetrisClientInfo info = (TetrisClientInfo)data;
                 int rows = gridPlayerRival.numLines;
@@ -268,39 +317,41 @@ namespace Tetris_ClientApp
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = 0; j < cols; j++)
-                    {
+                    {//Copie des couleurs de la grid de l'adversaire
                         gridPlayerRival.pictBox_Case[i, j].BackColor = info.tbColors[i,j];
                     }
                 }
+                //Ragrichissement du score
                 gridPlayerRival.score = info.score;
                 onScoreChanged(gridPlayerRival, EventArgs.Empty);
             }
         }
 
+        //Vient d'un invoke d'un PrintMessageHandler pour ajouter les messages du rival quand ils arrivent du réseau
         private void printMessageChat(TextBox txtbox, string msgToPrint)
         {
             Console.WriteLine("printing");
             txtbox.Text += "Rival: " + msgToPrint +"\r\n";
         }
 
-
+        //Appelé avec un invoke d'un TimerHandler pour démarrer le serveur. En effet par exemple, ne pas utiliser d'invoke provoque des bugs au démarrage du timer.
+        //Et comme on remet les scores à 0, on doit changer les labels donc on doit passer par un invoke
         private void startGameGridMe()
         {
             gridPlayerMe.start();
             btnReady.Enabled = false;
             btnReady.Text = "In game";
             PrintHandler p = new PrintHandler(printScore);
-            lblScoreMe.Text = "score " + gridPlayerMe.score.ToString();
-            lblScoreRival.Text = "score " + gridPlayerRival.score.ToString();
+            lblScoreMe.Text = "score 0";// + gridPlayerMe.score.ToString();
+            lblScoreRival.Text = "score 0";// + gridPlayerRival.score.ToString();
         }
 
-        private void RemoteServer_ClientConnected(Client client)
-        {
-        }
         private void RemoteServer_ClientDisconnected(Client client, string message)
         {
+            //Close l'appli si il n'y a plus de connexion 
             MessageBox.Show("You have been disconnected ! Window will now close.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             this.Close();
         }
+
     }
 }
